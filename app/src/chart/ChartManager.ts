@@ -167,52 +167,52 @@ export class ChartManager {
     this.app = app
 
     // Override default cut/copy/paste
-    document.addEventListener(
-      "cut",
-      e => {
-        if ((<HTMLElement>e.target).classList.contains("inlineEdit")) return
-        if (e.target instanceof HTMLTextAreaElement) return
-        if (e.target instanceof HTMLInputElement) return
-        if (this.mode != EditMode.Edit) return
-        const data = this.copy()
-        if (data) e.clipboardData?.setData("text/plain", data)
-        if (this.eventSelection.timingEvents.length > 0) {
-          this.deleteEventSelection()
-        } else {
-          this.deleteSelection()
-        }
-        e.preventDefault()
-      },
-      true
-    )
-    document.addEventListener(
-      "copy",
-      e => {
-        if ((<HTMLElement>e.target).classList.contains("inlineEdit")) return
-        if (e.target instanceof HTMLTextAreaElement) return
-        if (e.target instanceof HTMLInputElement) return
-        if (this.mode != EditMode.Edit) return
-        const data = this.copy()
-        if (data) e.clipboardData?.setData("text/plain", data)
-        e.preventDefault()
-        e.stopImmediatePropagation()
-      },
-      true
-    )
-    document.addEventListener(
-      "paste",
-      e => {
-        if ((<HTMLElement>e.target).classList.contains("inlineEdit")) return
-        if (e.target instanceof HTMLTextAreaElement) return
-        if (e.target instanceof HTMLInputElement) return
-        if (this.mode != EditMode.Edit) return
-        const clipboard = e.clipboardData?.getData("text/plain")
-        if (clipboard) this.paste(clipboard)
-        e.preventDefault()
-        e.stopImmediatePropagation()
-      },
-      true
-    )
+    // document.addEventListener(
+    //   "cut",
+    //   e => {
+    //     if ((<HTMLElement>e.target).classList.contains("inlineEdit")) return
+    //     if (e.target instanceof HTMLTextAreaElement) return
+    //     if (e.target instanceof HTMLInputElement) return
+    //     if (this.mode != EditMode.Edit) return
+    //     const data = this.copy()
+    //     if (data) e.clipboardData?.setData("text/plain", data)
+    //     if (this.eventSelection.timingEvents.length > 0) {
+    //       this.deleteEventSelection()
+    //     } else {
+    //       this.deleteSelection()
+    //     }
+    //     e.preventDefault()
+    //   },
+    //   true
+    // )
+    // document.addEventListener(
+    //   "copy",
+    //   e => {
+    //     if ((<HTMLElement>e.target).classList.contains("inlineEdit")) return
+    //     if (e.target instanceof HTMLTextAreaElement) return
+    //     if (e.target instanceof HTMLInputElement) return
+    //     if (this.mode != EditMode.Edit) return
+    //     const data = this.copy()
+    //     if (data) e.clipboardData?.setData("text/plain", data)
+    //     e.preventDefault()
+    //     e.stopImmediatePropagation()
+    //   },
+    //   true
+    // )
+    // document.addEventListener(
+    //   "paste",
+    //   e => {
+    //     if ((<HTMLElement>e.target).classList.contains("inlineEdit")) return
+    //     if (e.target instanceof HTMLTextAreaElement) return
+    //     if (e.target instanceof HTMLInputElement) return
+    //     if (this.mode != EditMode.Edit) return
+    //     const clipboard = e.clipboardData?.getData("text/plain")
+    //     if (clipboard) this.paste(clipboard)
+    //     e.preventDefault()
+    //     e.stopImmediatePropagation()
+    //   },
+    //   true
+    // )
 
     // Scrolling
     app.view.addEventListener?.("wheel", (event: WheelEvent) => {
@@ -497,21 +497,21 @@ export class ChartManager {
         if (event.target instanceof HTMLTextAreaElement) return
         if (event.target instanceof HTMLInputElement) return
         // Start editing note
-        if (
-          event.code.startsWith("Digit") &&
-          !event.repeat &&
-          !event.ctrlKey &&
-          !event.metaKey &&
-          !event.altKey &&
-          !event.ctrlKey
-        ) {
-          const col = parseInt(event.code.slice(5)) - 1
-          if (col < (this.loadedChart?.gameType.numCols ?? 4) && col > -1) {
-            this.setNote(col, "key")
-            event.preventDefault()
-            event.stopImmediatePropagation()
-          }
-        }
+        // if (
+        //   event.code.startsWith("Digit") &&
+        //   !event.repeat &&
+        //   !event.ctrlKey &&
+        //   !event.metaKey &&
+        //   !event.altKey &&
+        //   !event.ctrlKey
+        // ) {
+        //   const col = parseInt(event.code.slice(5)) - 1
+        //   if (col < (this.loadedChart?.gameType.numCols ?? 4) && col > -1) {
+        //     this.setNote(col, "key")
+        //     event.preventDefault()
+        //     event.stopImmediatePropagation()
+        //   }
+        // }
         if (!this.holdEditing.every(x => x == undefined)) {
           // Override any move+key combos when editing a hold
           const keybinds = [

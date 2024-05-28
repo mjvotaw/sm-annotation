@@ -679,16 +679,16 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       !Flags.playMode,
     callback: app => app.chartManager.setMode(EditMode.Play),
   },
-  recordMode: {
-    label: "Enter/Exit Record Mode",
-    combos: [{ key: "R", mods: [] }],
-    disabled: app =>
-      !app.chartManager.chartView ||
-      app.chartManager.getMode() == EditMode.Play ||
-      app.chartManager.getMode() == EditMode.View ||
-      !Flags.recordMode,
-    callback: app => app.chartManager.setMode(EditMode.Record),
-  },
+  // recordMode: {
+  //   label: "Enter/Exit Record Mode",
+  //   combos: [{ key: "R", mods: [] }],
+  //   disabled: app =>
+  //     !app.chartManager.chartView ||
+  //     app.chartManager.getMode() == EditMode.Play ||
+  //     app.chartManager.getMode() == EditMode.View ||
+  //     !Flags.recordMode,
+  //   callback: app => app.chartManager.setMode(EditMode.Record),
+  // },
   playModeStart: {
     label: "Play from start",
     combos: [{ key: "P", mods: [Modifier.SHIFT] }],
@@ -701,16 +701,16 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       app.chartManager.setMode(EditMode.Play)
     },
   },
-  recordModeStart: {
-    label: "Record from start",
-    combos: [{ key: "R", mods: [Modifier.SHIFT] }],
-    disabled: app =>
-      !app.chartManager.chartView ||
-      app.chartManager.getMode() == EditMode.Play ||
-      app.chartManager.getMode() == EditMode.View ||
-      !Flags.recordMode,
-    callback: app => app.chartManager.setMode(EditMode.Record),
-  },
+  // recordModeStart: {
+  //   label: "Record from start",
+  //   combos: [{ key: "R", mods: [Modifier.SHIFT] }],
+  //   disabled: app =>
+  //     !app.chartManager.chartView ||
+  //     app.chartManager.getMode() == EditMode.Play ||
+  //     app.chartManager.getMode() == EditMode.View ||
+  //     !Flags.recordMode,
+  //   callback: app => app.chartManager.setMode(EditMode.Record),
+  // },
   options: {
     label: "Options...",
     bindLabel: "Edit options",
@@ -1234,21 +1234,21 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       }
     },
   },
-  delete: {
-    label: "Delete",
-    combos: [
-      { key: "Backspace", mods: [] },
-      { key: "Delete", mods: [] },
-    ],
-    disabled: app =>
-      app.chartManager.getMode() != EditMode.Edit ||
-      (app.chartManager.selection.notes.length == 0 &&
-        app.chartManager.eventSelection.timingEvents.length == 0),
-    callback: app => {
-      app.chartManager.deleteSelection()
-      app.chartManager.deleteEventSelection()
-    },
-  },
+  // delete: {
+  //   label: "Delete",
+  //   combos: [
+  //     { key: "Backspace", mods: [] },
+  //     { key: "Delete", mods: [] },
+  //   ],
+  //   disabled: app =>
+  //     app.chartManager.getMode() != EditMode.Edit ||
+  //     (app.chartManager.selection.notes.length == 0 &&
+  //       app.chartManager.eventSelection.timingEvents.length == 0),
+  //   callback: app => {
+  //     app.chartManager.deleteSelection()
+  //     app.chartManager.deleteEventSelection()
+  //   },
+  // },
   paste: {
     label: "Paste",
     combos: [],

@@ -133,9 +133,9 @@ export class StatusWidget extends Widget {
     recordIcon.style.height = "36px"
     recordIcon.src = Icons.RECORD
     this.record.appendChild(recordIcon)
-    this.record.onclick = () => {
-      this.manager.chartManager.setMode(EditMode.Record)
-    }
+    // this.record.onclick = () => {
+    //   this.manager.chartManager.setMode(EditMode.Record)
+    // }
 
     tippy(this.record, {
       content: "Record" + this.keybind("recordMode"),
@@ -303,182 +303,182 @@ export class StatusWidget extends Widget {
     this.playbackBar.appendChild(this.skipStart)
     this.playbackBar.appendChild(this.skipEnd)
     this.playbackBar.appendChild(this.play)
-    this.playbackBar.appendChild(this.record)
+    // this.playbackBar.appendChild(this.record)
     this.playbackBar.appendChild(this.playtest)
     this.playbackBar.appendChild(line)
     this.playbackBar.appendChild(this.timeCounter)
     this.playbackBar.appendChild(line2)
     this.playbackBar.appendChild(this.beatCounter)
 
-    this.editSteps = document.createElement("button")
-    this.editSteps.classList.add("edit-fancy-button")
-    const editStepsIcon = document.createElement("img")
-    editStepsIcon.src = Icons.ADD
-    this.editSteps.appendChild(editStepsIcon)
-    this.editSteps.appendChild(document.createTextNode("Edit Steps"))
-    this.editSteps.onclick = () => {
-      this.manager.chartManager.editTimingMode = EditTimingMode.Off
-    }
-    this.editSteps.style.background = "rgba(255,255,255,0.15)"
+    // this.editSteps = document.createElement("button")
+    // this.editSteps.classList.add("edit-fancy-button")
+    // const editStepsIcon = document.createElement("img")
+    // editStepsIcon.src = Icons.ADD
+    // this.editSteps.appendChild(editStepsIcon)
+    // this.editSteps.appendChild(document.createTextNode("Edit Steps"))
+    // this.editSteps.onclick = () => {
+    //   this.manager.chartManager.editTimingMode = EditTimingMode.Off
+    // }
+    // this.editSteps.style.background = "rgba(255,255,255,0.15)"
 
-    this.editTiming = document.createElement("button")
-    this.editTiming.classList.add("edit-fancy-button")
-    const editTimingIcon = document.createElement("img")
-    editTimingIcon.src = Icons.SPEED
-    this.editTiming.appendChild(editTimingIcon)
-    this.editTiming.appendChild(document.createTextNode("Edit Timing"))
-    this.editTiming.onclick = () => {
-      this.manager.chartManager.editTimingMode = EditTimingMode.Edit
-    }
+    // this.editTiming = document.createElement("button")
+    // this.editTiming.classList.add("edit-fancy-button")
+    // const editTimingIcon = document.createElement("img")
+    // editTimingIcon.src = Icons.SPEED
+    // this.editTiming.appendChild(editTimingIcon)
+    // this.editTiming.appendChild(document.createTextNode("Edit Timing"))
+    // this.editTiming.onclick = () => {
+    //   this.manager.chartManager.editTimingMode = EditTimingMode.Edit
+    // }
 
-    const line4 = document.createElement("div")
-    line4.classList.add("playback-separator")
+    // const line4 = document.createElement("div")
+    // line4.classList.add("playback-separator")
 
-    const leftContainer = document.createElement("div")
-    leftContainer.classList.add("edit-bar-left")
+    // const leftContainer = document.createElement("div")
+    // leftContainer.classList.add("edit-bar-left")
 
-    leftContainer.appendChild(this.editSteps)
-    leftContainer.appendChild(this.editTiming)
-    leftContainer.appendChild(line4)
-    this.editBar.appendChild(leftContainer)
+    // leftContainer.appendChild(this.editSteps)
+    // leftContainer.appendChild(this.editTiming)
+    // leftContainer.appendChild(line4)
+    // this.editBar.appendChild(leftContainer)
 
-    this.editChoiceContainer = document.createElement("div")
-    this.editChoiceContainer.classList.add("edit-choice-container")
+    // this.editChoiceContainer = document.createElement("div")
+    // this.editChoiceContainer.classList.add("edit-choice-container")
 
-    this.stepsContainer = document.createElement("div")
-    this.stepsContainer.classList.add("edit-steps-container")
+    // this.stepsContainer = document.createElement("div")
+    // this.stepsContainer.classList.add("edit-steps-container")
 
-    this.timingContainer = document.createElement("div")
-    this.timingContainer.classList.add("edit-timing-container")
-    this.editChoiceContainer.appendChild(this.stepsContainer)
-    this.editChoiceContainer.appendChild(this.timingContainer)
+    // this.timingContainer = document.createElement("div")
+    // this.timingContainer.classList.add("edit-timing-container")
+    // this.editChoiceContainer.appendChild(this.stepsContainer)
+    // this.editChoiceContainer.appendChild(this.timingContainer)
 
-    this.addTimingEvent = document.createElement("button")
-    const addTimingEventIcon = document.createElement("img")
-    addTimingEventIcon.style.height = "32px"
-    addTimingEventIcon.src = Icons.ADD_EVENT
-    this.addTimingEvent.appendChild(addTimingEventIcon)
-    this.addTimingEvent.onclick = () => {
-      if (this.manager.chartManager.editTimingMode == EditTimingMode.Add)
-        this.manager.chartManager.editTimingMode = EditTimingMode.Edit
-      else this.manager.chartManager.editTimingMode = EditTimingMode.Add
-    }
-    this.timingContainer.appendChild(this.addTimingEvent)
+    // this.addTimingEvent = document.createElement("button")
+    // const addTimingEventIcon = document.createElement("img")
+    // addTimingEventIcon.style.height = "32px"
+    // addTimingEventIcon.src = Icons.ADD_EVENT
+    // this.addTimingEvent.appendChild(addTimingEventIcon)
+    // this.addTimingEvent.onclick = () => {
+    //   if (this.manager.chartManager.editTimingMode == EditTimingMode.Add)
+    //     this.manager.chartManager.editTimingMode = EditTimingMode.Edit
+    //   else this.manager.chartManager.editTimingMode = EditTimingMode.Add
+    // }
+    // this.timingContainer.appendChild(this.addTimingEvent)
 
-    tippy(this.addTimingEvent, {
-      content: "Add timing events",
-    })
+    // tippy(this.addTimingEvent, {
+    //   content: "Add timing events",
+    // })
 
-    this.arrangeTimingTracks = document.createElement("button")
-    const arrangeTimingTracksIcon = document.createElement("img")
-    arrangeTimingTracksIcon.style.height = "32px"
-    arrangeTimingTracksIcon.src = Icons.EYE
-    this.arrangeTimingTracks.appendChild(arrangeTimingTracksIcon)
-    this.arrangeTimingTracks.onclick = () => {
-      TimingTrackOrderPopup.active
-        ? TimingTrackOrderPopup.close()
-        : TimingTrackOrderPopup.open()
-    }
-    this.arrangeTimingTracks.id = "arrange-tracks"
-    this.timingContainer.appendChild(this.arrangeTimingTracks)
+    // this.arrangeTimingTracks = document.createElement("button")
+    // const arrangeTimingTracksIcon = document.createElement("img")
+    // arrangeTimingTracksIcon.style.height = "32px"
+    // arrangeTimingTracksIcon.src = Icons.EYE
+    // this.arrangeTimingTracks.appendChild(arrangeTimingTracksIcon)
+    // this.arrangeTimingTracks.onclick = () => {
+    //   TimingTrackOrderPopup.active
+    //     ? TimingTrackOrderPopup.close()
+    //     : TimingTrackOrderPopup.open()
+    // }
+    // this.arrangeTimingTracks.id = "arrange-tracks"
+    // this.timingContainer.appendChild(this.arrangeTimingTracks)
 
-    tippy(this.arrangeTimingTracks, {
-      content: "Arrange timing tracks",
-    })
+    // tippy(this.arrangeTimingTracks, {
+    //   content: "Arrange timing tracks",
+    // })
 
-    this.editBar.appendChild(this.editChoiceContainer)
+    // this.editBar.appendChild(this.editChoiceContainer)
 
-    const right = document.createElement("div")
-    right.classList.add("note-placeholder-right")
-    this.stepsContainer.appendChild(right)
+    // const right = document.createElement("div")
+    // right.classList.add("note-placeholder-right")
+    // this.stepsContainer.appendChild(right)
 
-    EventHandler.on("resize", () => {
-      this.trackingMovement = true
-      this.idleFrames = 5
-    })
+    // EventHandler.on("resize", () => {
+    //   this.trackingMovement = true
+    //   this.idleFrames = 5
+    // })
 
-    EventHandler.on("chartLoaded", () => {
-      this.stepsContainer.replaceChildren()
-      this.noteArrows.forEach(noteArrow => {
-        this.removeChild(noteArrow.sprite)
-        this.removeChild(noteArrow.bg)
-        this.removeChild(noteArrow.highlight)
-      })
-      this.noteArrows = []
-      const rightPlaceholder = document.createElement("div")
-      rightPlaceholder.classList.add("note-placeholder-right")
-      this.stepsContainer.appendChild(rightPlaceholder)
-      if (!this.manager.chartManager.loadedChart) return
-      for (const type of this.manager.chartManager.loadedChart.gameType
-        .editNoteTypes) {
-        const sprite = this.manager.chartManager
-          .chartView!.getNotefield()
-          .getNoteSprite({
-            type,
-            beat: 0,
-            col: 0,
-            quant: 4,
-            second: 0,
-            warped: false,
-            fake: false,
-          })
-        sprite.width = 32
-        sprite.height = 32
-        const bg = new Sprite(Texture.WHITE)
-        bg.tint = 0
-        bg.alpha = 0.5
-        bg.width = 48
-        bg.height = 48
-        bg.anchor.set(0.5)
-        const highlight = new BetterRoundedRect("noBorder")
-        highlight.alpha = 0
-        highlight.width = 48
-        highlight.height = 48
-        highlight.pivot.x = 24
-        highlight.pivot.y = 24
-        const element = document.createElement("button")
-        element.style.height = "48px"
-        element.style.width = "48px"
-        element.classList.add("note-placeholder")
-        element.onclick = () => {
-          this.manager.chartManager.setEditingNoteType(type)
-        }
-        tippy(element, { content: type + this.keybind("noteType" + type) })
-        const noteArrow = {
-          element,
-          sprite,
-          type,
-          bg,
-          highlight,
-          hovered: false,
-        }
-        element.onmouseover = () => {
-          noteArrow.hovered = true
-        }
-        element.onmouseleave = () => {
-          noteArrow.hovered = false
-        }
-        this.addChild(bg)
-        this.addChild(sprite)
-        this.addChild(highlight)
-        const bound = element.getBoundingClientRect()
-        sprite.position.y =
-          bound.top -
-          this.manager.app.view.clientHeight / 2 -
-          this.manager.app.view.getBoundingClientRect().top +
-          24
-        sprite.position.x =
-          bound.left - this.manager.app.view.clientWidth / 2 + 24
-        bg.position = sprite.position
-        this.noteArrows.push(noteArrow)
-      }
-      this.stepsContainer.replaceChildren(
-        ...this.noteArrows.map(arrow => arrow.element),
-        rightPlaceholder
-      )
-      this.trackingMovement = true
-      this.idleFrames = 5
-    })
+    // EventHandler.on("chartLoaded", () => {
+    //   this.stepsContainer.replaceChildren()
+    //   this.noteArrows.forEach(noteArrow => {
+    //     this.removeChild(noteArrow.sprite)
+    //     this.removeChild(noteArrow.bg)
+    //     this.removeChild(noteArrow.highlight)
+    //   })
+    //   this.noteArrows = []
+    //   const rightPlaceholder = document.createElement("div")
+    //   rightPlaceholder.classList.add("note-placeholder-right")
+    //   this.stepsContainer.appendChild(rightPlaceholder)
+    //   if (!this.manager.chartManager.loadedChart) return
+    //   for (const type of this.manager.chartManager.loadedChart.gameType
+    //     .editNoteTypes) {
+    //     const sprite = this.manager.chartManager
+    //       .chartView!.getNotefield()
+    //       .getNoteSprite({
+    //         type,
+    //         beat: 0,
+    //         col: 0,
+    //         quant: 4,
+    //         second: 0,
+    //         warped: false,
+    //         fake: false,
+    //       })
+    //     sprite.width = 32
+    //     sprite.height = 32
+    //     const bg = new Sprite(Texture.WHITE)
+    //     bg.tint = 0
+    //     bg.alpha = 0.5
+    //     bg.width = 48
+    //     bg.height = 48
+    //     bg.anchor.set(0.5)
+    //     const highlight = new BetterRoundedRect("noBorder")
+    //     highlight.alpha = 0
+    //     highlight.width = 48
+    //     highlight.height = 48
+    //     highlight.pivot.x = 24
+    //     highlight.pivot.y = 24
+    //     const element = document.createElement("button")
+    //     element.style.height = "48px"
+    //     element.style.width = "48px"
+    //     element.classList.add("note-placeholder")
+    //     element.onclick = () => {
+    //       this.manager.chartManager.setEditingNoteType(type)
+    //     }
+    //     tippy(element, { content: type + this.keybind("noteType" + type) })
+    //     const noteArrow = {
+    //       element,
+    //       sprite,
+    //       type,
+    //       bg,
+    //       highlight,
+    //       hovered: false,
+    //     }
+    //     element.onmouseover = () => {
+    //       noteArrow.hovered = true
+    //     }
+    //     element.onmouseleave = () => {
+    //       noteArrow.hovered = false
+    //     }
+    //     this.addChild(bg)
+    //     this.addChild(sprite)
+    //     this.addChild(highlight)
+    //     const bound = element.getBoundingClientRect()
+    //     sprite.position.y =
+    //       bound.top -
+    //       this.manager.app.view.clientHeight / 2 -
+    //       this.manager.app.view.getBoundingClientRect().top +
+    //       24
+    //     sprite.position.x =
+    //       bound.left - this.manager.app.view.clientWidth / 2 + 24
+    //     bg.position = sprite.position
+    //     this.noteArrows.push(noteArrow)
+    //   }
+    //   this.stepsContainer.replaceChildren(
+    //     ...this.noteArrows.map(arrow => arrow.element),
+    //     rightPlaceholder
+    //   )
+    //   this.trackingMovement = true
+    //   this.idleFrames = 5
+    // })
 
     this.noteArrowMask = new Sprite(Texture.WHITE)
     this.noteArrowMask.height = 48
@@ -497,7 +497,7 @@ export class StatusWidget extends Widget {
     view.onmouseleave = () => (this.hovering = false)
 
     view.appendChild(this.playbackBar)
-    view.appendChild(this.editBar)
+    // view.appendChild(this.editBar)
     this.view = view
     view.style.display = "none"
   }

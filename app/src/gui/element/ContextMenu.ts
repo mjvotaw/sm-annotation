@@ -50,24 +50,24 @@ export class ContextMenuPopup {
 
   private static buildMenu(app: App) {
     const menu = document.createElement("div")
-    menu.appendChild(
-      this.createElement(app, {
-        type: "selection",
-        id: "cut",
-      })
-    )
-    menu.appendChild(
-      this.createElement(app, {
-        type: "selection",
-        id: "copy",
-      })
-    )
-    menu.appendChild(
-      this.createElement(app, {
-        type: "selection",
-        id: "paste",
-      })
-    )
+    // menu.appendChild(
+    //   this.createElement(app, {
+    //     type: "selection",
+    //     id: "cut",
+    //   })
+    // )
+    // menu.appendChild(
+    //   this.createElement(app, {
+    //     type: "selection",
+    //     id: "copy",
+    //   })
+    // )
+    // menu.appendChild(
+    //   this.createElement(app, {
+    //     type: "selection",
+    //     id: "paste",
+    //   })
+    // )
     if (
       app.chartManager.getMode() == EditMode.Edit &&
       app.chartManager.hasNoteSelection()
