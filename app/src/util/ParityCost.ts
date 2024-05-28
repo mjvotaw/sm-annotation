@@ -516,11 +516,21 @@ export class ParityCostCalculator {
       this.doesLeftFootOverlapRight(initialPlacement, resultPlacement)
     ) {
       costs["BADBRACKET"] += this.WEIGHTS.BADBRACKET / elapsedTime
+    } else if (
+      initialPlacement.leftBracket &&
+      this.doesRightFootOverlapLeft(initialPlacement, resultPlacement)
+    ) {
+      costs["BADBRACKET"] += this.WEIGHTS.BADBRACKET / elapsedTime
     }
 
     if (
       resultPlacement.rightBracket &&
       this.doesRightFootOverlapLeft(initialPlacement, resultPlacement)
+    ) {
+      costs["BADBRACKET"] += this.WEIGHTS.BADBRACKET / elapsedTime
+    } else if (
+      initialPlacement.rightBracket &&
+      this.doesLeftFootOverlapRight(initialPlacement, resultPlacement)
     ) {
       costs["BADBRACKET"] += this.WEIGHTS.BADBRACKET / elapsedTime
     }

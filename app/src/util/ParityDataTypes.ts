@@ -235,8 +235,8 @@ export class StepParityGraph {
   // Returns the minimum amount of data needed to rebuild this graph,
   // for doing maths stuff
   // Returns basically just the neighbors
-  // [number, number[]][]
-  // An array of a pairing: a number, which is the index of the neighboring node,
+  // [number, number[]][][]
+  // An array  arrays of pairings: a number, which is the index of the neighboring node,
   // and an array of numbers where each number correstponds to a certain weight
   //
 
