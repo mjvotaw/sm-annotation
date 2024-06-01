@@ -51,9 +51,6 @@ export class ParityEditWindow extends Window {
   onClose() {
     window.Parity?.setEnabled(false)
     this.windowElement.dispatchEvent(new Event("closingWindow"))
-    EventHandler.off("smLoaded", this.resetParity.bind(this))
-    EventHandler.off("chartLoaded", this.resetParity.bind(this))
-    EventHandler.off("chartModified", this.resetParity.bind(this))
     EventHandler.off("snapToTickChanged", this.updateParityDisplay.bind(this))
     EventHandler.off("parityUpdated", this.updateParityDisplay.bind(this))
   }
@@ -71,7 +68,6 @@ export class ParityEditWindow extends Window {
     this.addFooterButtons()
 
     this.viewElement.appendChild(this.innerContainer)
-    this.resetParity()
     this.updateParityDisplay()
   }
 
@@ -176,7 +172,7 @@ export class ParityEditWindow extends Window {
     resetButton.innerText = "Reset All Overrides"
     resetButton.onclick = () => {
       window.Parity?.resetBeatOverrides()
-      this.resetParity()
+      window.Parity?.analyze()
     }
     footer.appendChild(resetButton)
 
@@ -254,27 +250,8 @@ export class ParityEditWindow extends Window {
   // Event handling
 
   setupEventHandlers() {
-    const reloadParity = () => {
-      this.resetParity()
-    }
-
-    EventHandler.on("smLoaded", this.resetParity.bind(this))
-    EventHandler.on("chartLoaded", this.resetParity.bind(this))
-    EventHandler.on("chartModified", this.resetParity.bind(this))
-
-    const updateDisplay = () => {
-      this.updateParityDisplay()
-    }
     EventHandler.on("snapToTickChanged", this.updateParityDisplay.bind(this))
     EventHandler.on("parityUpdated", this.updateParityDisplay.bind(this))
-
-    this.windowElement.addEventListener("closingWindow", function () {
-      EventHandler.off("smLoaded", reloadParity)
-      EventHandler.off("chartLoaded", reloadParity)
-      EventHandler.off("chartModified", reloadParity)
-      EventHandler.off("snapToTickChanged", updateDisplay)
-      EventHandler.off("parityUpdated", updateDisplay)
-    })
   }
 
   updateParityDisplay() {
@@ -341,7 +318,7 @@ export class ParityEditWindow extends Window {
   }
 
   resetParity() {
-    window.Parity?.resetBeatOverrides()
+    window.Parity?.clearState()
     window.Parity?.analyze()
   }
 

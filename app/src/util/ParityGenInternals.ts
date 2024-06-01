@@ -49,13 +49,15 @@ export class ParityGenInternal {
   analyze(
     notedata: Notedata,
     beatOverrides: BeatOverrides | undefined,
-    weights: { [key: string]: number }
+    weights: { [key: string]: number },
+    existingGraph: StepParityGraph | undefined = undefined
   ): { graph: StepParityGraph; selectedStates: State[]; parities: Foot[][] } {
     this.costCalculator.setWeights(weights)
 
     const rows = this.createRows(notedata)
 
-    const graph = this.buildStateGraph(rows, undefined)
+    const graph = existingGraph || this.buildStateGraph(rows)
+    this.clearOverrides(graph)
     if (beatOverrides != undefined) {
       this.applyOverrides(graph, beatOverrides)
     }
@@ -288,7 +290,7 @@ export class ParityGenInternal {
   ): Foot[][] {
     const rows = this.createRows(notedata)
 
-    const graph = this.buildStateGraph(rows, beatOverrides)
+    const graph = this.buildStateGraph(rows)
     const states = this.selectStatesForRows(graph, rows.length)
     const parities = states.map(s => s.columns)
     this.setNoteParity(rows, parities, beatOverrides)
@@ -326,10 +328,7 @@ export class ParityGenInternal {
   // Generates a StepParityGraph from the given array of Rows.
   // The graph inserts two additional nodes: one that represent the beginning of the song, before the first note,
   // and one that represents the end of the song, after the final note.
-  buildStateGraph(
-    rows: Row[],
-    beatOverrides: BeatOverrides | undefined
-  ): StepParityGraph {
+  buildStateGraph(rows: Row[]): StepParityGraph {
     const graph: StepParityGraph = new StepParityGraph()
     const beginningState: State = new State(-1, rows[0].second - 1, -1, [])
 
@@ -344,14 +343,7 @@ export class ParityGenInternal {
       while (previousStates.length > 0) {
         const state = previousStates.shift()!
         const initialNode = graph.addOrGetExistingNode(state)
-        let permuteColumns: Foot[][] = this.getPermuteColumns(rows[i])
-        if (beatOverrides && beatOverrides.hasBeatOverride(rows[i].beat)) {
-          permuteColumns = this.buildOverridenPermuteColumns(
-            rows[i],
-            permuteColumns,
-            beatOverrides
-          )
-        }
+        const permuteColumns: Foot[][] = this.getPermuteColumns(rows[i])
 
         for (const columns of permuteColumns) {
           const resultState: State = this.initResultState(
@@ -399,19 +391,40 @@ export class ParityGenInternal {
     return graph
   }
 
+  // Applies an "OVERRIDE" cost to nodes that should be overridden.
+  // Nodes are overridden when there is an override for their row,
+  // but their foot placement doesn't match the requested foot placement
   applyOverrides(graph: StepParityGraph, beatOverrides: BeatOverrides) {
     for (const node of graph.nodes) {
       if (beatOverrides.shouldNodeBeOverridden(node)) {
         node.ancestors.forEach((_, aidx) => {
           const costToNode = graph.nodes[aidx].neighbors.get(node.id)
           if (costToNode != undefined) {
-            costToNode["OVERRIDE"] += 100000
+            costToNode["OVERRIDE"] = 100000
             costToNode["TOTAL"] += 100000
             graph.nodes[aidx].neighbors.set(node.id, { ...costToNode })
             node.ancestors.set(aidx, { ...costToNode })
           }
         })
       }
+    }
+  }
+
+  // Clears an override costs that were previously added to this graph
+  clearOverrides(graph: StepParityGraph) {
+    for (const node of graph.nodes) {
+      node.ancestors.forEach((_, aidx) => {
+        const costToNode = graph.nodes[aidx].neighbors.get(node.id)
+        if (costToNode != undefined) {
+          if (costToNode["OVERRIDE"]) {
+            const overrideCost = costToNode["OVERRIDE"]
+            costToNode["TOTAL"] -= overrideCost
+            costToNode["OVERRIDE"] = 0
+            graph.nodes[aidx].neighbors.set(node.id, { ...costToNode })
+            node.ancestors.set(aidx, { ...costToNode })
+          }
+        }
+      })
     }
   }
 

@@ -87,7 +87,8 @@ clear(): clear parity highlights`)
     const { graph, selectedStates, parities } = this.parityGenInternal.analyze(
       notedata,
       this.beatOverrides,
-      this.WEIGHTS
+      this.WEIGHTS,
+      this.lastGraph
     )
     this.lastGraph = graph
     this.lastStates = selectedStates
@@ -103,6 +104,13 @@ clear(): clear parity highlights`)
 
   getIsEnabled(): boolean {
     return this.isEnabled
+  }
+
+  clearState() {
+    this.lastGraph = undefined
+    this.lastStates = undefined
+    this.lastParities = []
+    this.beatOverrides = new BeatOverrides(this.layout.columnCount)
   }
 
   //

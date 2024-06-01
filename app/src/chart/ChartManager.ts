@@ -705,12 +705,14 @@ export class ChartManager {
 
     EventHandler.emit("smLoaded")
     await this.loadChart()
-    EventHandler.emit("smLoadedAfter")
+
     if (this.time == 0) this.setBeat(0)
 
     // open parity edit window, enable parity, etc
     window.Parity?.setEnabled(true)
+    window.Parity?.clearState()
     window.Parity?.analyze()
+    EventHandler.emit("smLoadedAfter")
     this.app.windowManager.openWindow(new ParityEditWindow(this.app))
 
     // RecentFileHandler.addSM(this.smPath, this.loadedSM)
