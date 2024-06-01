@@ -4,16 +4,16 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/smeditor",
+  base: "/sm-annotation",
   appType: "mpa",
   plugins: [
     VitePWA({
       registerType: "autoUpdate",
       manifestFilename: "manifest.json",
       manifest: {
-        short_name: "SMEditor",
-        name: "SMEditor",
-        start_url: "/smeditor/app",
+        short_name: "SMAnnotation",
+        name: "SMAnnotation",
+        start_url: "/sm-annotation/app",
         display: "standalone",
         theme_color: "#18191c",
         background_color: "#18191c",
