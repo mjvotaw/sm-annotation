@@ -1465,7 +1465,7 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
     combos: [],
     disabled: app => !app.chartManager.chartView,
     callback: () => {
-      Options.experimental.showDanceStage = !Options.experimental.showDanceStage
+      Options.general.showDanceStage = !Options.general.showDanceStage
     },
   },
 }

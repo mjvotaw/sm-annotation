@@ -85,7 +85,7 @@ export class ContextMenuPopup {
       ) {
         const menuOption: MenuOption = {
           type: "dropdown",
-          title: "Set Parity",
+          title: "Set Override",
           options: [
             {
               type: "selection",
