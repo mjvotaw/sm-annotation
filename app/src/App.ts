@@ -33,6 +33,7 @@ import { extname } from "./util/Path"
 import { fpsUpdate } from "./util/Performance"
 import { isIFrame } from "./util/Util"
 import { FileHandler } from "./util/file-handler/FileHandler"
+import { TutorialOverlay } from "./gui/overlay/TutorialOverlay"
 
 declare global {
   interface Window {
@@ -186,7 +187,18 @@ export class App {
     FileHandler.initFileSystem().then(() => {
       // If this is their first time, show a tutorial,
       // otherwise, load a song
-      const notFirstTime = localStorage.getItem("not_first_time")
+
+      const userId = localStorage.getItem("user_id")
+      if (userId == null) {
+        //TODO: Actually implement tutorial
+
+        localStorage.setItem("user_id", "local-dev-user-id")
+        // const tutorialOverlay = new TutorialOverlay()
+        // this.overlayManager.openOverlay(tutorialOverlay)
+        this.chartManager.loadSongFromAWS()
+      } else {
+        this.chartManager.loadSongFromAWS()
+      }
       // if (notFirstTime == null)
       // {
       // }

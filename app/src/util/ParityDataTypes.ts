@@ -224,11 +224,15 @@ export class StepParityGraph {
     return shortest_path
   }
 
-  serialized(indent: boolean): string {
+  toSerializable() {
     const serializableStepGraph = {
       states: this.states.map(s => s.toSerializable()),
       nodes: this.nodes.map(n => n.toSerializable()),
     }
+    return serializableStepGraph
+  }
+  serialized(indent: boolean): string {
+    const serializableStepGraph = this.toSerializable()
     return JSON.stringify(serializableStepGraph, null, indent ? 2 : undefined)
   }
 

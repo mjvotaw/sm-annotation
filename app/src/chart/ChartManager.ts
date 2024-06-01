@@ -53,7 +53,7 @@ import {
 import { Simfile } from "./sm/Simfile"
 import { Cached, TIMING_EVENT_NAMES, TimingEvent } from "./sm/TimingTypes"
 import { LoadingOverlay } from "../gui/overlay/LoadingOverlay"
-import { getNextSong } from "../util/AWS"
+import { getNextSong, GetNextSongResponse } from "../util/AWS"
 
 const SNAPS = [1, 2, 3, 4, 6, 8, 12, 16, 24, 48, -1]
 
@@ -127,6 +127,7 @@ export class ChartManager {
   loadedSM?: Simfile
   smPath = ""
   loadedChart?: Chart
+  loadedChartAWSInfo?: GetNextSongResponse
 
   selection: Selection = {
     notes: [],
@@ -860,6 +861,7 @@ export class ChartManager {
     this.app.overlayManager.openOverlay(loadingOverlay)
     const nextSong = await getNextSong()
     await this.loadSM(nextSong.sm_url)
+    this.loadedChartAWSInfo = nextSong
     loadingOverlay.closeOverlay()
   }
   /**

@@ -7,6 +7,7 @@ import { EventHandler } from "../../util/EventHandler"
 import { FileHandler } from "../../util/file-handler/FileHandler"
 import { WebFileHandler } from "../../util/file-handler/WebFileHandler"
 import { Foot } from "../../util/ParityDataTypes"
+import { AnnotationData, saveAnnotation } from "../../util/AWS"
 
 export class ParityEditWindow extends Window {
   app: App
@@ -423,7 +424,13 @@ export class ParityEditWindow extends Window {
     }
   }
 
+  private isSavingData: boolean = false
+
   async saveDataForMike() {
+    if (this.isSavingData) {
+      return
+    }
+
     if (window.Parity?.lastGraph == undefined) {
       return
     }
@@ -432,18 +439,33 @@ export class ParityEditWindow extends Window {
     const selectedNodes = window.Parity.lastGraph.computeCheapestPath()
     const overrides = window.Parity.getOverridesByRow()
 
-    const dataToSave = {
-      nodes: minimalNodes,
-      selectedNodes: selectedNodes,
+    const dataToSave: AnnotationData = {
+      selected_nodes: selectedNodes,
       overrides: overrides,
+      parities: window.Parity.lastParities,
     }
-    const dataJson = JSON.stringify(dataToSave)
-    const error = await this.saveJsonData(dataJson, "node-data")
-    if (error == null) {
-      WaterfallManager.create("Saved Node Data")
-    } else {
-      WaterfallManager.createFormatted("Failed to save file: " + error, "error")
+
+    const userId = localStorage.getItem("user_id")
+    const songId = this.app.chartManager.loadedChartAWSInfo?.song_id ?? null
+    console.log(
+      `user_id: ${userId}, song_id: ${songId}, dataToSave:`,
+      dataToSave
+    )
+    if (userId == null || songId == null) {
+      return
     }
+    this.isSavingData = true
+    try {
+      const success = await saveAnnotation(userId, songId, dataToSave)
+      if (success) {
+        WaterfallManager.create("Saved Annotation Data")
+      } else {
+        WaterfallManager.create("Failed to save Annotatoin Data :C")
+      }
+    } catch (err) {
+      console.log("error saving data:", err)
+    }
+    this.isSavingData = false
   }
 
   async saveJsonData(data: string, fileSuffix: string): Promise<string | null> {
