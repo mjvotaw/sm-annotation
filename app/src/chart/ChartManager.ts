@@ -15,6 +15,7 @@ import { WidgetManager } from "../gui/widget/WidgetManager"
 import { ChartListWindow } from "../gui/window/ChartListWindow"
 import { ConfirmationWindow } from "../gui/window/ConfirmationWindow"
 import { InitialWindow } from "../gui/window/InitialWindow"
+import { ParityEditWindow } from "../gui/window/ParityEditWindow"
 import { ActionHistory } from "../util/ActionHistory"
 import {
   decodeNotes,
@@ -51,6 +52,8 @@ import {
 } from "./sm/NoteTypes"
 import { Simfile } from "./sm/Simfile"
 import { Cached, TIMING_EVENT_NAMES, TimingEvent } from "./sm/TimingTypes"
+import { LoadingOverlay } from "../gui/overlay/LoadingOverlay"
+import { getNextSong } from "../util/AWS"
 
 const SNAPS = [1, 2, 3, 4, 6, 8, 12, 16, 24, 48, -1]
 
@@ -661,6 +664,7 @@ export class ChartManager {
     }
 
     ActionHistory.instance.setLimit()
+    this.app.windowManager.closeWindow("edit_parity_window")
 
     // Destroy everything if no path specified
     if (!path) {
@@ -703,7 +707,12 @@ export class ChartManager {
     EventHandler.emit("smLoadedAfter")
     if (this.time == 0) this.setBeat(0)
 
-    RecentFileHandler.addSM(this.smPath, this.loadedSM)
+    // open parity edit window, enable parity, etc
+    window.Parity?.setEnabled(true)
+    window.Parity?.analyze()
+    this.app.windowManager.openWindow(new ParityEditWindow(this.app))
+
+    // RecentFileHandler.addSM(this.smPath, this.loadedSM)
   }
 
   /**
@@ -843,6 +852,16 @@ export class ChartManager {
     this.getAssistTickIndex()
   }
 
+  /**
+   * Loads a song from AWS for annotation purposes
+   */
+  async loadSongFromAWS() {
+    const loadingOverlay = new LoadingOverlay()
+    this.app.overlayManager.openOverlay(loadingOverlay)
+    const nextSong = await getNextSong()
+    await this.loadSM(nextSong.sm_url)
+    loadingOverlay.closeOverlay()
+  }
   /**
    * Loads the next simfile, relative to the current smPath's
    * parent folder. This assumes that smPath is part of a pack of simfiles.

@@ -50,4 +50,11 @@ export class WindowManager {
     }
     return undefined
   }
+
+  closeWindow(id: string) {
+    const window = this.getWindowById(id)
+    if (window) {
+      window.closeWindow()
+    }
+  }
 }

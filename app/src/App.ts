@@ -21,6 +21,7 @@ import { DebugWidget } from "./gui/widget/DebugWidget"
 import { DirectoryWindow } from "./gui/window/DirectoryWindow"
 import { InitialWindow } from "./gui/window/InitialWindow"
 import { WindowManager } from "./gui/window/WindowManager"
+import { OverlayManager } from "./gui/overlay/OverlayManager"
 import { ActionHistory } from "./util/ActionHistory"
 import { BetterRoundedRect } from "./util/BetterRoundedRect"
 import { EventHandler } from "./util/EventHandler"
@@ -65,6 +66,7 @@ export class App {
   view: HTMLCanvasElement
   chartManager: ChartManager
   windowManager: WindowManager
+  overlayManager: OverlayManager
   menubarManager: MenubarManager
   actionHistory: ActionHistory
 
@@ -149,6 +151,10 @@ export class App {
       this,
       document.getElementById("windows") as HTMLDivElement
     )
+    this.overlayManager = new OverlayManager(
+      this,
+      document.getElementById("overlays") as HTMLDivElement
+    )
     this.actionHistory = new ActionHistory(this)
 
     this.registerListeners()
@@ -178,52 +184,16 @@ export class App {
     }
 
     FileHandler.initFileSystem().then(() => {
-      if (Flags.url) {
-        this.chartManager.loadSM(Flags.url).then(() => {
-          const sm = this.chartManager.loadedSM
-          if (!sm) return
-          let gameTypeCharts: Chart[] | undefined
-          if (Flags.chartType != null) {
-            gameTypeCharts = sm.charts[Flags.chartType]
-            if (gameTypeCharts === undefined) {
-              WaterfallManager.createFormatted(
-                `Couldn't find chart with type ${Flags.chartType}`,
-                "warn"
-              )
-              return
-            }
-          }
-          if (gameTypeCharts === undefined) {
-            const gameTypes = Object.keys(sm.charts)
-            if (gameTypes.length == 0) {
-              // no charts available
-              return
-            }
-            gameTypeCharts = sm.charts[gameTypes[0]]
-            if (gameTypeCharts.length == 0) {
-              return
-            }
-          }
-          let chart: Chart | undefined
-          if (Flags.chartIndex != null) {
-            chart = gameTypeCharts.at(Flags.chartIndex)
-            if (chart === undefined) {
-              WaterfallManager.createFormatted(
-                `Couldn't find chart with index ${Flags.chartIndex}`,
-                "warn"
-              )
-              return
-            }
-          }
-          if (chart === undefined) {
-            chart = gameTypeCharts.at(-1)
-            if (!chart) return
-          }
-          this.chartManager.loadChart(chart)
-        })
-        return
-      }
-      this.windowManager.openWindow(new InitialWindow(this))
+      // If this is their first time, show a tutorial,
+      // otherwise, load a song
+      const notFirstTime = localStorage.getItem("not_first_time")
+      // if (notFirstTime == null)
+      // {
+      // }
+      // else
+      // {
+      // }
+      // this.windowManager.openWindow(new InitialWindow(this))
     })
 
     window.onbeforeunload = event => {
@@ -316,49 +286,6 @@ export class App {
       event.preventDefault()
       event.dataTransfer!.dropEffect = "copy"
     })
-
-    window.addEventListener("drop", event => {
-      if (window.nw) {
-        event.stopPropagation()
-        event.preventDefault()
-
-        let foundSM = ""
-        for (const file of event.dataTransfer!.files) {
-          if (file.path) {
-            if (extname(file.path) == ".ssc") {
-              foundSM = file.path
-              break
-            } else if (foundSM == "" && extname(file.path) == ".sm") {
-              foundSM = file.path
-            }
-          }
-        }
-        if (foundSM != "") {
-          this.chartManager.loadSM(foundSM)
-          this.windowManager.getWindowById("select_sm_initial")?.closeWindow()
-        }
-      } else {
-        FileHandler.handleDropEvent(event).then(folder => {
-          const dirWindow = new DirectoryWindow(this, {
-            title: "Select an sm/ssc file...",
-            accepted_file_types: [".sm", ".ssc"],
-            disableClose: true,
-            callback: (path: string) => {
-              this.chartManager.loadSM(path)
-              this.windowManager
-                .getWindowById("select_sm_initial")
-                ?.closeWindow()
-            },
-            onload: () => {
-              dirWindow
-                .getAcceptableFile(folder ?? "")
-                .then(path => dirWindow.selectPath(path))
-            },
-          })
-          this.windowManager.openWindow(dirWindow)
-        })
-      }
-    })
   }
 
   onResize(screenWidth: number, screenHeight: number) {
@@ -414,6 +341,7 @@ document.querySelector("body")!.innerHTML = `<div id="popups"></div>
           <div id="context-menu"></div>
           <div id="blocker" style="display: none"></div>
           <div id="windows"></div>
+          <div id="overlays"></div>
           <div id="embed"></div>
         `
 

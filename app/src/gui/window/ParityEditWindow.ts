@@ -29,12 +29,12 @@ export class ParityEditWindow extends Window {
     )
 
     super({
-      title: "Edit Parity Data",
+      title: "Edit Step Annotations",
       width: 370,
-      height: 420,
+      height: 300,
       left: posLeft,
-      disableClose: false,
-      win_id: "parity_stuff",
+      disableClose: true,
+      win_id: "edit_parity_window",
       blocking: false,
     })
 
@@ -124,7 +124,7 @@ export class ParityEditWindow extends Window {
     container.appendChild(receptorContainer)
 
     const displayLabel = document.createElement("div")
-    displayLabel.innerText = "Current Parity:"
+    displayLabel.innerText = "Current Annotations:"
     container.appendChild(displayLabel)
     container.appendChild(displayContainer)
 
@@ -187,22 +187,22 @@ export class ParityEditWindow extends Window {
     }
     footer.appendChild(resetButton)
 
-    const importButton = document.createElement("button")
-    importButton.innerText = "Import Parity Data"
-    importButton.onclick = () => {
-      this.openParityImport()
-    }
-    footer.appendChild(importButton)
+    // const importButton = document.createElement("button")
+    // importButton.innerText = "Import Parity Data"
+    // importButton.onclick = () => {
+    //   this.openParityImport()
+    // }
+    // footer.appendChild(importButton)
 
-    const saveButton = document.createElement("button")
-    saveButton.innerText = "Save Parity Data"
-    saveButton.onclick = () => {
-      this.saveParity()
-    }
-    footer.appendChild(saveButton)
+    // const saveButton = document.createElement("button")
+    // saveButton.innerText = "Save Parity Data"
+    // saveButton.onclick = () => {
+    //   this.saveParity()
+    // }
+    // footer.appendChild(saveButton)
 
     const saveNodesButton = document.createElement("button")
-    saveNodesButton.innerText = "Save Node Data"
+    saveNodesButton.innerText = "Save Step Annotations"
     saveNodesButton.onclick = () => {
       this.saveDataForMike()
     }
