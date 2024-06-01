@@ -78,10 +78,7 @@ export class StageWidget extends Widget {
 
   update() {
     let isVisible = false
-    if (
-      this.manager.chartManager.chartView &&
-      Options.experimental.showDanceStage
-    ) {
+    if (this.manager.chartManager.chartView && Options.general.showDanceStage) {
       isVisible = true
     }
     this.visible = isVisible

@@ -146,6 +146,15 @@ export const USER_OPTIONS_WINDOW_DATA: UserOption[] = [
             },
             tooltip: "The default increment for all number spinners.",
           },
+          {
+            type: "item",
+            label: "Show Dancing Feet",
+            id: "general.showDanceStage",
+            input: {
+              type: "checkbox",
+            },
+            tooltip: "Show a little dance stage with some feet on it.",
+          },
         ],
       },
     ],

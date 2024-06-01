@@ -12,6 +12,7 @@ export class DefaultOptions {
     spinnerStep: 1,
     smoothAnimations: true,
     warnBeforeExit: true,
+    showDanceStage: false,
   }
   static chart = {
     CMod: false,
@@ -124,9 +125,6 @@ export class DefaultOptions {
   static debug = {
     showFPS: false,
     showTimers: false,
-  }
-  static experimental = {
-    showDanceStage: false,
   }
 }
 
