@@ -1,8 +1,8 @@
 # SMEditor
 
-This is a fork of [SMEditor](https://tillvit.github.io/smeditor), created to aid in building a database of good foot placement data for doing some Smart Math Stuff with it in the near future.
+This is a fork of [SMEditor](https://tillvit.github.io/smeditor), created to aid in building a database of good step annotation data for doing some Smart Math Stuff with it in the near future.
 
-See [PARITYEDITOR.md](PARITYEDITOR.md) for details on how the parity editor works.
+See [STEPANNOTATION.md](STEPANNOTATION.md) for details on how it works.
 
 #### What is "parity"?
 

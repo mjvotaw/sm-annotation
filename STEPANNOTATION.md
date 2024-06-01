@@ -1,33 +1,27 @@
-# Using the Parity Editor
+# Step Annotation 
 
-After you've opened a stepchart to edit, select `Chart > Edit Parity Data`, or press `alt+shift+P` to open the Edity Parity Data window.
+The tl;dr is: I'm trying to make this process as simple as possible. When you load this app, it will load a song from a remote database. Fix the step annotations, and click "Save Step Annotations", and it will save it back to that database. If you want to fix another, click `File > Load New Song...`, and you'll be given another song to fix.
+
+When you load the application, a random song will be loaded, and an initial set of step annotations generated.
 
 ![Edit Parity Data window](assets/preview/editParityWindow.png "Edit Parity Data window")
 
 This window shows you the current parity settings for the current beat.
 
- - Current Parity:
+ - Current Annotations:
     
-   This is the current parity setting for the given column.
+   This is the current step annotations for the current beat.
 - Overrides:
 
-  This displays what override has been chosen (if any) for a column. Selecting a value will update the chart and the `Current Parity` setting above.
+  This displays what override has been chosen (if any) for a column. Selecting a value will update the chart and the `Current Annotations` setting above.
 
 - Reset All Overrides
 
   This will clear the _entire chart_ of any parity overrides.
 
-- Import Parity Data
+- Save Step Annotations
 
-  This will open a small textarea for you to paste JSON into (dealing with file uploading is slightly nontrivial, and I didn't feel like implementing that right now)
-
-- Save Parity Data
-
-  This will save the parity data for the given stepchart to JSON, named "[song title]-[difficulty]-parity.json"
-
-- Save Node Data
-  
-  This will save a json file that contains several parts. Please send these to me.
+  This will save the step annotation data to a remote database. If, after saving, you realize that you need to make additional changes, that's fine! Just hit "Save Step Annotations" again, and the database will update your saved annotations.
 
 
 
@@ -48,8 +42,9 @@ Rows that have had their parity manually changed will have a red line on the bot
 
 ![Parity Note Override Example](assets/preview/parityNoteOverrideExample.png "Parity Note Override Example")
 
-## Known Issues
+## Common Issues 
 
+Here are a couple of known issues to look out for when when correcting the step annotations.
 - When a hold note ends on the same row as other notes, it will show up as selectable in the Edit Parity Data window. This is a quirk with how the parity data is stored (the hold note is relevant to how the other notes are hit). 
 ![Parity Hold Note Quirk](assets/preview/parity-hold-note-quirk.png "Parity Hold Note quirk")
 

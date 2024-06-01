@@ -12,14 +12,10 @@ import "tippy.js/animations/scale-subtle.css"
 import "tippy.js/dist/tippy.css"
 import WebFont from "webfontloader"
 import { ChartManager } from "./chart/ChartManager"
-import { Chart } from "./chart/sm/Chart"
 import { ContextMenuPopup } from "./gui/element/ContextMenu"
 import { MenubarManager } from "./gui/element/MenubarManager"
-import { WaterfallManager } from "./gui/element/WaterfallManager"
 import { UpdatePopup } from "./gui/popup/UpdatePopup"
 import { DebugWidget } from "./gui/widget/DebugWidget"
-import { DirectoryWindow } from "./gui/window/DirectoryWindow"
-import { InitialWindow } from "./gui/window/InitialWindow"
 import { WindowManager } from "./gui/window/WindowManager"
 import { OverlayManager } from "./gui/overlay/OverlayManager"
 import { ActionHistory } from "./util/ActionHistory"
@@ -29,11 +25,9 @@ import { Flags, loadFlags } from "./util/Flags"
 import { Keybinds } from "./util/Keybinds"
 import { Options } from "./util/Options"
 import { ParityGenerator } from "./util/ParityGenerator"
-import { extname } from "./util/Path"
 import { fpsUpdate } from "./util/Performance"
 import { isIFrame } from "./util/Util"
 import { FileHandler } from "./util/file-handler/FileHandler"
-import { TutorialOverlay } from "./gui/overlay/TutorialOverlay"
 
 declare global {
   interface Window {
@@ -124,8 +118,8 @@ export class App {
     })
 
     // This is just for using the pixijs chrome plugin
-    globalThis.__PIXI_STAGE__ = this.stage
-    globalThis.__PIXI_RENDERER__ = this.renderer
+    // globalThis.__PIXI_STAGE__ = this.stage
+    // globalThis.__PIXI_RENDERER__ = this.renderer
 
     this.ticker = new Ticker()
     this.ticker.maxFPS = 120

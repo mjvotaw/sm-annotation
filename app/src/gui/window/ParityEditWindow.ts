@@ -1,5 +1,4 @@
 import { App } from "../../App"
-import { NumberSpinner } from "../element/NumberSpinner"
 import { WaterfallManager } from "../element/WaterfallManager"
 import { Window } from "./Window"
 import { basename, dirname } from "../../util/Path"
@@ -18,10 +17,8 @@ export class ParityEditWindow extends Window {
   private parityImportContainer?: HTMLDivElement
   private parityImportTextarea?: HTMLTextAreaElement
   private parityDisplayContainer?: HTMLDivElement
-  private parityWeightsContainer?: HTMLDivElement
 
   private currentWeights: { [key: string]: number }
-  private numberFields: { [key: string]: NumberSpinner } = {}
 
   constructor(app: App) {
     const posLeft = Math.min(
@@ -63,11 +60,10 @@ export class ParityEditWindow extends Window {
     this.innerContainer.classList.add("padding")
 
     this.addParityDisplay()
-    this.addWeightEditor()
-    this.addParityImport()
     this.addFooterButtons()
 
     this.viewElement.appendChild(this.innerContainer)
+    this.parityDisplayContainer = document.createElement("div")
     this.updateParityDisplay()
   }
 
@@ -118,11 +114,11 @@ export class ParityEditWindow extends Window {
       this.parityOverrideSelects.push(selector)
     }
 
-    container.appendChild(receptorContainer)
-
     const displayLabel = document.createElement("div")
     displayLabel.innerText = "Current Annotations:"
     container.appendChild(displayLabel)
+
+    container.appendChild(receptorContainer)
     container.appendChild(displayContainer)
 
     const overrideLabel = document.createElement("div")
@@ -131,8 +127,8 @@ export class ParityEditWindow extends Window {
     container.appendChild(overrideLabel)
     container.appendChild(overridesContainer)
 
-    this.innerContainer.appendChild(container)
     this.parityDisplayContainer = container
+    this.innerContainer.appendChild(this.parityDisplayContainer)
   }
 
   createParitySelector(): HTMLSelectElement {
@@ -186,67 +182,6 @@ export class ParityEditWindow extends Window {
     this.innerContainer.appendChild(footer)
   }
 
-  addParityImport() {
-    const importContainer = document.createElement("div")
-    importContainer.classList.add("import-parity-container")
-    importContainer.classList.add("hidden")
-
-    const label = document.createElement("p")
-    label.innerText = "Import Parity Data"
-    importContainer.appendChild(label)
-
-    const importTextarea = document.createElement("textarea")
-    importTextarea.placeholder = "Paste parity JSON data here"
-    importContainer.appendChild(importTextarea)
-
-    const buttonContainer = document.createElement("div")
-    buttonContainer.classList.add("import-buttons")
-
-    const importButton = document.createElement("button")
-    importButton.innerText = "Import"
-    importButton.onclick = () => {
-      this.importParity()
-    }
-
-    const cancelButton = document.createElement("button")
-    cancelButton.innerText = "Close"
-    cancelButton.onclick = () => {
-      this.closeParityImport()
-    }
-
-    buttonContainer.appendChild(importButton)
-    buttonContainer.appendChild(cancelButton)
-    importContainer.appendChild(buttonContainer)
-    this.parityImportContainer = importContainer
-    this.parityImportTextarea = importTextarea
-    this.innerContainer.appendChild(importContainer)
-  }
-
-  addWeightEditor() {
-    const weightContainer = document.createElement("div")
-    weightContainer.classList.add("parity-weights-container", "hidden")
-
-    const weightKeys = Object.keys(this.currentWeights)
-    weightKeys.forEach(title => {
-      const weightLine = document.createElement("div")
-      weightLine.classList.add("parity-weight")
-      const label = document.createElement("div")
-      label.classList.add("label")
-      label.innerText = title
-
-      const item = NumberSpinner.create(this.currentWeights[title], 10, 0)
-      item.onChange = value => {
-        this.currentWeights[title] = value || this.currentWeights[title]
-        this.updateParityWeights()
-      }
-      weightLine.appendChild(label)
-      weightLine.appendChild(item.view)
-      weightContainer.appendChild(weightLine)
-      this.numberFields[title] = item
-    })
-    this.parityWeightsContainer = weightContainer
-    this.innerContainer.appendChild(weightContainer)
-  }
   // Event handling
 
   setupEventHandlers() {
@@ -390,7 +325,6 @@ export class ParityEditWindow extends Window {
       return
     }
 
-    const minimalNodes = window.Parity.lastGraph.toSerializableMinimalNodes()
     const selectedNodes = window.Parity.lastGraph.computeCheapestPath()
     const overrides = window.Parity.getOverridesByRow()
 

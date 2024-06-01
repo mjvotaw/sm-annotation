@@ -3,14 +3,12 @@ import { Container, Sprite, Texture } from "pixi.js"
 import tippy from "tippy.js"
 import { EditMode, EditTimingMode } from "../../chart/ChartManager"
 import { BetterRoundedRect } from "../../util/BetterRoundedRect"
-import { EventHandler } from "../../util/EventHandler"
 import { Flags } from "../../util/Flags"
 import { Keybinds } from "../../util/Keybinds"
 import { roundDigit } from "../../util/Math"
 import { Options } from "../../util/Options"
 import { Icons } from "../Icons"
 import { Dropdown } from "../element/Dropdown"
-import { TimingTrackOrderPopup } from "../popup/TimingTrackOrderPopup"
 import { Widget } from "./Widget"
 import { WidgetManager } from "./WidgetManager"
 
@@ -42,14 +40,6 @@ export class StatusWidget extends Widget {
   private readonly beatDropdown: Dropdown<string>
 
   private readonly editBar: HTMLDivElement
-  private readonly editSteps: HTMLButtonElement
-  private readonly editTiming: HTMLButtonElement
-  private readonly stepsContainer: HTMLDivElement
-  private readonly timingContainer: HTMLDivElement
-  private readonly editChoiceContainer: HTMLDivElement
-
-  private readonly addTimingEvent: HTMLButtonElement
-  private readonly arrangeTimingTracks: HTMLButtonElement
 
   private noteArrows: NoteArrow[] = []
   private readonly noteArrowMask: Sprite
@@ -622,16 +612,7 @@ export class StatusWidget extends Widget {
       switch (timingMode) {
         case EditTimingMode.Off:
           this.visible = true
-          this.stepsContainer.style.transform = ""
-          this.timingContainer.style.transform = ""
-          this.editSteps.style.background = "rgba(255,255,255,0.15)"
-          this.editTiming.style.background = ""
           break
-        case EditTimingMode.Add:
-          this.addTimingEvent.style.background = "rgba(255,255,255,0.15)"
-          break
-        case EditTimingMode.Edit:
-          this.addTimingEvent.style.background = ""
       }
       if (
         (this.lastTimingMode == EditTimingMode.Off &&
@@ -643,14 +624,6 @@ export class StatusWidget extends Widget {
       this.trackingMovement = true
       this.idleFrames = 5
       this.lastTimingMode = timingMode
-      this.stepsContainer.style.transform =
-        timingMode == EditTimingMode.Off ? "" : "translateY(-48px)"
-      this.timingContainer.style.transform =
-        timingMode == EditTimingMode.Off ? "" : "translateY(-48px)"
-      this.editSteps.style.background =
-        timingMode == EditTimingMode.Off ? "rgba(255,255,255,0.15)" : ""
-      this.editTiming.style.background =
-        timingMode == EditTimingMode.Off ? "" : "rgba(255,255,255,0.15)"
     }
 
     const playing = this.manager.chartManager.chartAudio.isPlaying()
