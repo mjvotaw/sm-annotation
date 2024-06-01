@@ -1,4 +1,4 @@
-import { Foot, SerializableState, SerializableNode } from "./ParityDataTypes"
+import { Foot } from "./ParityDataTypes"
 
 const LAMBDA_GET_NEXT_SONG =
   "https://fvzwv57y4dzkar626oks7kr5tu0opmju.lambda-url.us-east-1.on.aws/"

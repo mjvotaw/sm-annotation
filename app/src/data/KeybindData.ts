@@ -191,12 +191,12 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
     },
   },
   newSong: {
-    label: "New song...",
+    label: "Load New song...",
     bindLabel: "New song",
-    combos: [{ key: "N", mods: [DEF_MOD] }],
+    combos: [],
     disabled: app => !app.chartManager.loadedSM || !Flags.openWindows,
     callback: app => {
-      app.windowManager.openWindow(new NewSongWindow(app))
+      app.chartManager.loadSongFromAWS()
     },
   },
   openSong: {

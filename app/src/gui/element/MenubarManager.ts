@@ -4,7 +4,6 @@ import { MENUBAR_DATA, MenuOption } from "../../data/MenubarData"
 import { Flags } from "../../util/Flags"
 import { Keybinds } from "../../util/Keybinds"
 import { EventHandler } from "../../util/EventHandler"
-import { basename, dirname } from "../../util/Path"
 import { Icons } from "../Icons"
 
 export class MenubarManager {
@@ -129,13 +128,14 @@ export class MenubarManager {
     ) {
       this.titleDisplay.innerText = ""
     } else {
-      const smPath = this.app.chartManager.smPath
-      const dir = dirname(smPath)
-      const fileName = basename(dir)
+      const title = this.app.chartManager.loadedSM?.getTitleTranslit() || ""
+
       const difficulty =
         this.app.chartManager.loadedChart?.difficulty || "No Difficulty"
 
-      this.titleDisplay.innerText = `${fileName} - ${difficulty}`
+      const description = this.app.chartManager.loadedChart?.description || ""
+
+      this.titleDisplay.innerText = `${title} - ${difficulty} - Desc: ${description}`
     }
   }
 }

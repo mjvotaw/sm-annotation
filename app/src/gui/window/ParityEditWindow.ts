@@ -172,14 +172,6 @@ export class ParityEditWindow extends Window {
     const footer = document.createElement("div")
     footer.classList.add("footer")
 
-    // const showHideWeights = document.createElement("button")
-    // showHideWeights.innerText = "Show/Hide Weights"
-    // showHideWeights.onclick = () => {
-    //   this.parityWeightsContainer?.classList.toggle("hidden")
-    //   this.parityDisplayContainer?.classList.toggle("hidden")
-    // }
-    // footer.appendChild(showHideWeights)
-
     const resetButton = document.createElement("button")
     resetButton.innerText = "Reset All Overrides"
     resetButton.onclick = () => {
@@ -187,20 +179,6 @@ export class ParityEditWindow extends Window {
       this.resetParity()
     }
     footer.appendChild(resetButton)
-
-    // const importButton = document.createElement("button")
-    // importButton.innerText = "Import Parity Data"
-    // importButton.onclick = () => {
-    //   this.openParityImport()
-    // }
-    // footer.appendChild(importButton)
-
-    // const saveButton = document.createElement("button")
-    // saveButton.innerText = "Save Parity Data"
-    // saveButton.onclick = () => {
-    //   this.saveParity()
-    // }
-    // footer.appendChild(saveButton)
 
     const saveNodesButton = document.createElement("button")
     saveNodesButton.innerText = "Save Step Annotations"

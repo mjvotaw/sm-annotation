@@ -230,6 +230,14 @@ export class Simfile {
     return false
   }
 
+  getTitle(): string {
+    return this.properties.TITLE || ""
+  }
+
+  getTitleTranslit(): string {
+    return this.properties.TITLETRANSLIT || this.properties.TITLE || ""
+  }
+
   private formatProperty(name: string, item: string | number | undefined) {
     item ||= ""
     return "#" + name.toUpperCase() + ":" + item + ";\n"

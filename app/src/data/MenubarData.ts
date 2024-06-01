@@ -37,35 +37,16 @@ export type MenuOption =
   | MenuSeparator
 
 export const MENUBAR_DATA: { [key: string]: MenuMain } = {
-  // file: {
-  //   type: "menu",
-  //   title: "File",
-  //   options: [
-  //     {
-  //       type: "selection",
-  //       id: "newSong",
-  //     },
-  //     {
-  //       type: "selection",
-  //       id: "openSong",
-  //     },
-  //     {
-  //       type: "selection",
-  //       id: "nextSong",
-  //     },
-  //     {
-  //       type: "separator",
-  //     },
-  //     {
-  //       type: "selection",
-  //       id: "save",
-  //     },
-  //     {
-  //       type: "selection",
-  //       id: "export",
-  //     },
-  //   ],
-  // },
+  file: {
+    type: "menu",
+    title: "File",
+    options: [
+      {
+        type: "selection",
+        id: "newSong",
+      },
+    ],
+  },
   // edit: {
   //   type: "menu",
   //   title: "Edit",
