@@ -186,7 +186,7 @@ export class App {
       if (userId == null) {
         //TODO: Actually implement tutorial
 
-        localStorage.setItem("user_id", "local-dev-user-id")
+        localStorage.setItem("user_id", window.crypto.randomUUID())
         // const tutorialOverlay = new TutorialOverlay()
         // this.overlayManager.openOverlay(tutorialOverlay)
         this.chartManager.loadSongFromAWS()
