@@ -151,7 +151,9 @@ clear(): clear parity highlights`)
 
   resetBeatOverrides() {
     const previousOverrides = this.beatOverrides.getBeatOverrides()
-
+    if (Object.keys(previousOverrides).length == 0) {
+      return
+    }
     ActionHistory.instance.run({
       action: () => {
         this.beatOverrides.setBeatOverrides({})

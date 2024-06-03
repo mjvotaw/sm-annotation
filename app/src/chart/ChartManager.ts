@@ -637,31 +637,31 @@ export class ChartManager {
   async loadSM(path?: string) {
     UpdatePopup.close()
     // Save confirmation
-    if (ActionHistory.instance.isDirty()) {
-      const window = new ConfirmationWindow(
-        this.app,
-        "Save",
-        "Do you wish to save the current file?",
-        [
-          {
-            label: "Cancel",
-            type: "default",
-          },
-          {
-            label: "No",
-            type: "default",
-          },
-          {
-            label: "Yes",
-            type: "confirm",
-          },
-        ]
-      )
-      this.app.windowManager.openWindow(window)
-      const option = await window.resolved
-      if (option == "Cancel") return
-      if (option == "Yes") this.save()
-    }
+    // if (ActionHistory.instance.isDirty()) {
+    //   const window = new ConfirmationWindow(
+    //     this.app,
+    //     "Save",
+    //     "Do you wish to save the current file?",
+    //     [
+    //       {
+    //         label: "Cancel",
+    //         type: "default",
+    //       },
+    //       {
+    //         label: "No",
+    //         type: "default",
+    //       },
+    //       {
+    //         label: "Yes",
+    //         type: "confirm",
+    //       },
+    //     ]
+    //   )
+    //   this.app.windowManager.openWindow(window)
+    //   const option = await window.resolved
+    //   if (option == "Cancel") return
+    //   if (option == "Yes") this.save()
+    // }
 
     ActionHistory.instance.setLimit()
     this.app.windowManager.closeWindow("edit_parity_window")

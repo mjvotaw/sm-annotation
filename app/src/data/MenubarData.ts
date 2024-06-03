@@ -47,43 +47,20 @@ export const MENUBAR_DATA: { [key: string]: MenuMain } = {
       },
     ],
   },
-  // edit: {
-  //   type: "menu",
-  //   title: "Edit",
-  //   options: [
-  //     {
-  //       type: "selection",
-  //       id: "cut",
-  //     },
-  //     {
-  //       type: "selection",
-  //       id: "copy",
-  //     },
-  //     {
-  //       type: "selection",
-  //       id: "paste",
-  //     },
-  //     {
-  //       type: "separator",
-  //     },
-  //     {
-  //       type: "selection",
-  //       id: "undo",
-  //     },
-  //     {
-  //       type: "selection",
-  //       id: "redo",
-  //     },
-  //     {
-  //       type: "separator",
-  //     },
-  //     {
-  //       type: "checkbox",
-  //       id: "mousePlacement",
-  //       checked: () => Options.chart.mousePlacement,
-  //     },
-  //   ],
-  // },
+  edit: {
+    type: "menu",
+    title: "Edit",
+    options: [
+      {
+        type: "selection",
+        id: "undo",
+      },
+      {
+        type: "selection",
+        id: "redo",
+      },
+    ],
+  },
   view: {
     type: "menu",
     title: "View",
