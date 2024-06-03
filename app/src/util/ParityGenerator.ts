@@ -171,7 +171,7 @@ clear(): clear parity highlights`)
   // First checks if setting this override would create
   // a definitely invalid foot placement
   // Then, checks to make sure there's at least one state
-  // for the given beat with the given foot at the given column
+  // that matches the override for this beat
   isNoteOverrideValid(beat: number, col: number, foot: Foot): boolean {
     // If foot == Foot.NONE, then that means we're clearing this override,
     // which is always a valid thing to do
@@ -181,18 +181,29 @@ clear(): clear parity highlights`)
     if (!this.beatOverrides.isNoteOverrideValid(beat, col, foot)) {
       return false
     }
-
+    const overridesForThisBeat = this.beatOverrides.getOverridesAtBeat(beat)
+    overridesForThisBeat[col] = foot
     const possibleStates = this.lastGraph!.getStatesForBeat(beat)
 
     let atLeastOneValidState = false
     for (const state of possibleStates) {
-      if (state.combinedColumns[col] == foot) {
+      if (this.doesOverrideWorkForState(state, overridesForThisBeat)) {
         atLeastOneValidState = true
         break
       }
     }
 
     return atLeastOneValidState
+  }
+
+  // Does state.combinedColumns contain this override?
+  private doesOverrideWorkForState(state: State, override: Foot[]): boolean {
+    for (let i = 0; i < override.length; i++) {
+      if (override[i] != Foot.NONE && state.combinedColumns[i] != override[i]) {
+        return false
+      }
+    }
+    return true
   }
 
   //

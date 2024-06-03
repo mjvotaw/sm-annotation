@@ -33,6 +33,8 @@ export class StageWidget extends Widget {
 
   private lastUpdateTime: number = 0
 
+  private doUpdateAnyway: boolean = false
+
   private LEFT_DEFAULT_POSITION: FootPositionAtTime = {
     x: 100,
     y: 150,
@@ -92,15 +94,15 @@ export class StageWidget extends Widget {
     const showFeet = window.Parity?.getIsEnabled() || false
 
     const currentTime = new Date().getTime()
-    if (this.lastUpdateTime == 0) {
+    if (this.lastUpdateTime == 0 && !this.doUpdateAnyway) {
       this.lastUpdateTime = currentTime
       return
     }
 
     const currentBeat = this.manager.chartManager.getBeat()
     const beatDelta = currentBeat - this.lastBeatCrossed
-    if (beatDelta != 0) {
-      this.updateStage(currentBeat, showFeet)
+    if (beatDelta != 0 || this.doUpdateAnyway) {
+      this.updateStage(currentBeat, showFeet, false)
 
       for (let i = 0; i < this.arrowFlashes.length; i++) {
         if (this.stageLightsBeatsLeft[i] > 0) {
@@ -130,6 +132,7 @@ export class StageWidget extends Widget {
     }
     this.lastUpdateTime = currentTime
     this.lastBeatCrossed = currentBeat
+    this.doUpdateAnyway = false
   }
 
   private setupEventHandlers() {
@@ -141,9 +144,20 @@ export class StageWidget extends Widget {
       this.stageLightsBeatsLeft = [0, 0, 0, 0]
     })
     EventHandler.on("playbackStart", () => {})
+
+    EventHandler.on("parityUpdated", () => {
+      const showFeet = window.Parity?.getIsEnabled() || false
+      const currentBeat = this.manager.chartManager.getBeat()
+      this.updateStage(currentBeat, showFeet, true)
+      this.doUpdateAnyway = true
+    })
   }
 
-  private updateStage(currentBeat: number, showFeet: boolean) {
+  private updateStage(
+    currentBeat: number,
+    showFeet: boolean,
+    refreshCurrentBeat: boolean
+  ) {
     // TODO: make this work for other layouts
 
     if (this.manager.chartManager.loadedChart == undefined) {
@@ -156,11 +170,15 @@ export class StageWidget extends Widget {
       return
     }
 
+    if (currentBeat > notes.at(-1)!.beat) {
+      return
+    }
+
     // If the user scrolled backwards, reset lastNoteDataIndex to the note just before the current beat
-    if (currentBeat < this.lastBeatCrossed) {
+    if (currentBeat < this.lastBeatCrossed || refreshCurrentBeat) {
       this.lastNoteDataIndex = Math.max(
         0,
-        notes.findIndex(n => n.beat >= currentBeat - 1) - 1
+        notes.findIndex(n => n.beat >= currentBeat - 1) - 6
       )
       beatDelta = 0
     }
@@ -178,45 +196,57 @@ export class StageWidget extends Widget {
     let rightHeel: NotedataEntry | undefined
     let rightToe: NotedataEntry | undefined
 
-    if (currentBeat <= notes.at(-1)!.beat) {
-      for (let index = this.lastNoteDataIndex; index < notes.length; index++) {
-        const note = notes[index]
+    let lastParsedBeat = -1
 
-        if (note.beat > currentBeat + this.LIGHTS_LOOKAHEAD_BEATS) {
-          this.lastNoteDataIndex = index
-          break
-        }
-        if (note.fake) {
-          continue
+    for (let index = this.lastNoteDataIndex; index < notes.length; index++) {
+      const note = notes[index]
+
+      if (note.beat > currentBeat + this.LIGHTS_LOOKAHEAD_BEATS) {
+        this.lastNoteDataIndex = index
+        break
+      }
+      if (note.fake) {
+        continue
+      }
+
+      if (["Tap", "Hold", "Roll"].includes(note.type)) {
+        if (note.type == "Hold" || note.type == "Roll") {
+          this.stageLightsBeatsLeft[notes[index].col] = (
+            note as HoldNotedataEntry
+          ).hold
+        } else {
+          this.stageLightsBeatsLeft[notes[index].col] =
+            this.LIGHTS_FALLOFF_BEATS
         }
 
-        if (["Tap", "Hold", "Roll"].includes(note.type)) {
-          if (note.type == "Hold" || note.type == "Roll") {
-            this.stageLightsBeatsLeft[notes[index].col] = (
-              note as HoldNotedataEntry
-            ).hold
-          } else {
-            this.stageLightsBeatsLeft[notes[index].col] =
-              this.LIGHTS_FALLOFF_BEATS
+        if (showFeet && note.parity != undefined) {
+          switch (note.parity) {
+            case "L":
+              leftHeel = note
+              // this is to deal with when we're parsing through a large
+              // jump between lastBeatCrossed and currentBeat
+              // (usually backing up in the editor, or changing parity)
+              // If we hit a Left heel or right Heel, and this is the start of
+              // a new row, we want to clear out the toe
+              if (lastParsedBeat != note.beat) {
+                leftToe = undefined
+              }
+              break
+            case "l":
+              leftToe = note
+              break
+            case "R":
+              rightHeel = note
+              if (lastParsedBeat != note.beat) {
+                rightToe = undefined
+              }
+              break
+            case "r":
+              rightToe = note
+              break
           }
-
-          if (showFeet && note.parity != undefined) {
-            switch (note.parity) {
-              case "L":
-                leftHeel = note
-                break
-              case "l":
-                leftToe = note
-                break
-              case "R":
-                rightHeel = note
-                break
-              case "r":
-                rightToe = note
-                break
-            }
-          }
         }
+        lastParsedBeat = note.beat
       }
     }
 
@@ -399,16 +429,14 @@ export class StageWidget extends Widget {
     return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 }
   }
 
-  private getBracketAngle(p1: IPointData, p2: IPointData): number {
-    if (p1.y == p2.y) {
+  private getBracketAngle(heel: IPointData, toe: IPointData): number {
+    if (heel.y == toe.y) {
       return 0
     }
-    const top = p1.y < p2.y ? p1 : p2
-    const bottom = p1.y > p2.y ? p1 : p2
-
-    const dy = Math.abs(bottom.y - top.y)
-    const dx = bottom.x - top.x
-    return Math.atan2(dy, dx) - Math.PI * 0.5
+    const dy = heel.y - toe.y
+    const dx = heel.x - toe.x
+    const angle = Math.atan2(dx, dy) * -1
+    return angle
   }
 
   private getFeetAngle(
