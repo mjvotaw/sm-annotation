@@ -1161,9 +1161,7 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       if (notes.length != 1) {
         return
       }
-      if (window.Parity?.addNoteOverride(notes[0].beat, notes[0].col, 1)) {
-        window.Parity?.analyze()
-      }
+      window.Parity?.updateNoteOverride(notes[0].beat, notes[0].col, 1)
     },
   },
   parityLeftToe: {
@@ -1178,9 +1176,7 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       if (notes.length != 1) {
         return
       }
-      if (window.Parity?.addNoteOverride(notes[0].beat, notes[0].col, 2)) {
-        window.Parity?.analyze()
-      }
+      window.Parity?.updateNoteOverride(notes[0].beat, notes[0].col, 2)
     },
   },
   parityRightHeel: {
@@ -1195,9 +1191,7 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       if (notes.length != 1) {
         return
       }
-      if (window.Parity?.addNoteOverride(notes[0].beat, notes[0].col, 3)) {
-        window.Parity?.analyze()
-      }
+      window.Parity?.updateNoteOverride(notes[0].beat, notes[0].col, 3)
     },
   },
   parityRightToe: {
@@ -1212,9 +1206,7 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       if (notes.length != 1) {
         return
       }
-      if (window.Parity?.addNoteOverride(notes[0].beat, notes[0].col, 4)) {
-        window.Parity?.analyze()
-      }
+      window.Parity?.updateNoteOverride(notes[0].beat, notes[0].col, 4)
     },
   },
   parityNone: {
@@ -1229,9 +1221,7 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       if (notes.length != 1) {
         return
       }
-      if (window.Parity?.removeNoteOverride(notes[0].beat, notes[0].col)) {
-        window.Parity?.analyze()
-      }
+      window.Parity?.updateNoteOverride(notes[0].beat, notes[0].col, 0)
     },
   },
   // delete: {

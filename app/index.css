@@ -980,6 +980,7 @@ div.inlineEdit[contenteditable="true"]:focus {
 
 .parity-display-panel {
   width: 24%;
+  text-align: center;
 }
 
 .parity-display-panel select,
@@ -1989,6 +1990,7 @@ input[type="range"] {
   border-radius: 5px;
   transform-origin: top left;
   opacity: 0.95;
+  z-index: 1;
 }
 
 .animated #context-menu.entering {

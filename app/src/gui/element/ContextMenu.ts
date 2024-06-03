@@ -85,7 +85,7 @@ export class ContextMenuPopup {
       ) {
         const menuOption: MenuOption = {
           type: "dropdown",
-          title: "Set Override",
+          title: "Correct Foot Placement",
           options: [
             {
               type: "selection",

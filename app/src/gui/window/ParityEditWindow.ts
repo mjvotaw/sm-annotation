@@ -27,7 +27,7 @@ export class ParityEditWindow extends Window {
     )
 
     super({
-      title: "Edit Step Annotations",
+      title: "Edit Foot Placements",
       width: 370,
       height: 300,
       left: posLeft,
@@ -115,14 +115,14 @@ export class ParityEditWindow extends Window {
     }
 
     const displayLabel = document.createElement("div")
-    displayLabel.innerText = "Current Annotations:"
+    displayLabel.innerText = "Current Foot Placements:"
     container.appendChild(displayLabel)
 
     container.appendChild(receptorContainer)
     container.appendChild(displayContainer)
 
     const overrideLabel = document.createElement("div")
-    overrideLabel.innerText = "Overrides:"
+    overrideLabel.innerText = "Corrections:"
 
     container.appendChild(overrideLabel)
     container.appendChild(overridesContainer)
@@ -165,7 +165,7 @@ export class ParityEditWindow extends Window {
     footer.classList.add("footer")
 
     const resetButton = document.createElement("button")
-    resetButton.innerText = "Reset All Overrides"
+    resetButton.innerText = "Reset All Corrections"
     resetButton.onclick = () => {
       window.Parity?.resetBeatOverrides()
       window.Parity?.analyze()
@@ -173,7 +173,7 @@ export class ParityEditWindow extends Window {
     footer.appendChild(resetButton)
 
     const saveNodesButton = document.createElement("button")
-    saveNodesButton.innerText = "Save Step Annotations"
+    saveNodesButton.innerText = "Save Foot Placements"
     saveNodesButton.onclick = () => {
       this.saveDataForMike()
     }
@@ -195,7 +195,7 @@ export class ParityEditWindow extends Window {
     }
     const beat = this.app.chartManager?.getBeat()
     const parity = window.Parity?.getParityForBeat(beat)
-    const overrides = window.Parity?.getBeatOverride(beat)
+    const overrides = window.Parity?.getOverridesAtBeat(beat)
 
     const optionLabels = [
       "None",
@@ -247,8 +247,7 @@ export class ParityEditWindow extends Window {
       const column = parseInt(columnStr)
       const parity = parseInt(selector.value)
       const beat = this.app.chartManager?.getBeat()
-      window.Parity?.addNoteOverride(beat, column, parity)
-      window.Parity?.analyze()
+      window.Parity?.updateNoteOverride(beat, column, parity)
     }
   }
 

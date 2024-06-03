@@ -13,6 +13,7 @@ import {
   BeatOverrides,
 } from "./ParityDataTypes"
 import { ParityGenInternal } from "./ParityGenInternals"
+import { ActionHistory } from "./ActionHistory"
 
 export class ParityGenerator {
   private readonly app
@@ -117,36 +118,79 @@ clear(): clear parity highlights`)
   // Methods for checking/setting overrides
   //
 
-  hasBeatOverride(beat: number): boolean {
-    return this.beatOverrides.hasBeatOverride(beat)
+  hasOverrideAtBeat(beat: number): boolean {
+    return this.beatOverrides.hasOverrideAtBeat(beat)
   }
 
-  getBeatOverride(beat: number): Foot[] {
-    return this.beatOverrides.getBeatOverride(beat)
+  getOverridesAtBeat(beat: number): Foot[] {
+    return this.beatOverrides.getOverridesAtBeat(beat)
   }
 
   getNoteOverride(beat: number, col: number): Foot {
     return this.beatOverrides.getNoteOverride(beat, col)
   }
 
-  addNoteOverride(beat: number, col: number, foot: Foot): boolean {
-    return this.beatOverrides.addNoteOverride(beat, col, foot)
-  }
+  updateNoteOverride(beat: number, col: number, foot: Foot) {
+    if (!this.isNoteOverrideValid(beat, col, foot)) {
+      EventHandler.emit("parityUpdated")
+      return
+    }
+    const previousOverride = this.getNoteOverride(beat, col)
 
-  addBeatOverride(beat: number, feet: Foot[]): boolean {
-    return this.beatOverrides.addBeatOverride(beat, feet)
-  }
-
-  removeNoteOverride(beat: number, col: number): boolean {
-    return this.beatOverrides.removeNoteOverride(beat, col)
-  }
-
-  removeBeatOverride(beat: number): boolean {
-    return this.beatOverrides.removeBeatOverride(beat)
+    ActionHistory.instance.run({
+      action: () => {
+        this.beatOverrides.setNoteOverride(beat, col, foot)
+        this.analyze()
+      },
+      undo: () => {
+        this.beatOverrides.setNoteOverride(beat, col, previousOverride)
+        this.analyze()
+      },
+    })
   }
 
   resetBeatOverrides() {
-    this.beatOverrides = new BeatOverrides(this.layout.columnCount)
+    const previousOverrides = this.beatOverrides.getBeatOverrides()
+
+    ActionHistory.instance.run({
+      action: () => {
+        this.beatOverrides.setBeatOverrides({})
+        this.analyze()
+      },
+      undo: () => {
+        this.beatOverrides.setBeatOverrides(previousOverrides)
+        this.analyze()
+      },
+    })
+  }
+
+  // Does setting this foot for the given column create
+  // a foot placement that is valid?
+  // First checks if setting this override would create
+  // a definitely invalid foot placement
+  // Then, checks to make sure there's at least one state
+  // for the given beat with the given foot at the given column
+  isNoteOverrideValid(beat: number, col: number, foot: Foot): boolean {
+    // If foot == Foot.NONE, then that means we're clearing this override,
+    // which is always a valid thing to do
+    if (foot == Foot.NONE) {
+      return true
+    }
+    if (!this.beatOverrides.isNoteOverrideValid(beat, col, foot)) {
+      return false
+    }
+
+    const possibleStates = this.lastGraph!.getStatesForBeat(beat)
+
+    let atLeastOneValidState = false
+    for (const state of possibleStates) {
+      if (state.combinedColumns[col] == foot) {
+        atLeastOneValidState = true
+        break
+      }
+    }
+
+    return atLeastOneValidState
   }
 
   //

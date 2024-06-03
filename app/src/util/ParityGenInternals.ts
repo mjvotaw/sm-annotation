@@ -132,14 +132,16 @@ export class ParityGenInternal {
     return this.permuteColumn(row, columns, column + 1)
   }
 
+  // This isn't actually used anymore, because I changed how
+  // overrides are handled. I'll probably delete it soon.
   buildOverridenPermuteColumns(
     row: Row,
     permuteColumns: Foot[][],
     beatOverrides: BeatOverrides
   ): Foot[][] {
-    if (beatOverrides.hasBeatOverride(row.beat)) {
+    if (beatOverrides.hasOverrideAtBeat(row.beat)) {
       const updatedPermuteColumns: Foot[][] = []
-      const overrides: Foot[] = beatOverrides.getBeatOverride(row.beat)
+      const overrides: Foot[] = beatOverrides.getOverridesAtBeat(row.beat)
       for (const pc of permuteColumns) {
         const updatedPc: Foot[] = [...pc]
 
@@ -174,7 +176,7 @@ export class ParityGenInternal {
         console.warn(
           `Could not generate any valid permutations with parity overrides for row at beat ${row.beat}, clearing overrides, as there must be something invalid about it.`
         )
-        beatOverrides.removeBeatOverride(row.beat)
+        beatOverrides.removeOverridesAtBeat(row.beat)
         return permuteColumns
       } else {
         return updatedPermuteColumns
@@ -319,7 +321,7 @@ export class ParityGenInternal {
         if (rows[i].notes[j]) {
           rows[i].notes[j]!.parity = FEET_LABEL[FEET.indexOf(parityForRow[j])]
           rows[i].notes[j]!.parityOverride =
-            beatOverrides && beatOverrides.hasBeatOverride(rows[i].beat)
+            beatOverrides && beatOverrides.hasOverrideAtBeat(rows[i].beat)
         }
       }
     }

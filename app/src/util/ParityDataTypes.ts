@@ -224,6 +224,19 @@ export class StepParityGraph {
     return shortest_path
   }
 
+  getStatesForBeat(beat: number): State[] {
+    const statesForBeat: State[] = []
+    for (const state of this.states) {
+      if (Math.abs(state.beat - beat) < 0.0001) {
+        statesForBeat.push(state)
+      }
+      if (state.beat > beat) {
+        break
+      }
+    }
+    return statesForBeat
+  }
+
   toSerializable() {
     const serializableStepGraph = {
       states: this.states.map(s => s.toSerializable()),
@@ -265,6 +278,7 @@ export class StepParityGraph {
     })
     return minimalNodes
   }
+
   serializeMinimalNodes(indent: boolean): string {
     const serializedNodes = this.toSerializableMinimalNodes()
     return JSON.stringify(serializedNodes, null, indent ? 2 : undefined)
@@ -276,16 +290,24 @@ export class StepParityGraph {
 // beatOverrides is a dictionary, where the key is the song's beat truncated to 3 decimal places,
 // and the value is a Foot[] array. Any value other than Foot.NONE indicates an override.
 export class BeatOverrides {
-  beatOverrides: { [key: string]: Foot[] } = {}
-  columnCount: number
+  private beatOverrides: { [key: string]: Foot[] } = {}
+  private columnCount: number
 
   constructor(columnCount: number) {
     this.columnCount = columnCount
   }
 
+  getBeatOverrides() {
+    return { ...this.beatOverrides }
+  }
+
+  setBeatOverrides(overrides: { [key: string]: Foot[] }) {
+    this.beatOverrides = { ...overrides }
+  }
+
   shouldNodeBeOverridden(node: StepParityNode): boolean {
-    if (this.hasBeatOverride(node.state.beat)) {
-      const override = this.getBeatOverride(node.state.beat)
+    if (this.hasOverrideAtBeat(node.state.beat)) {
+      const override = this.getOverridesAtBeat(node.state.beat)
       for (let i = 0; i < override.length; i++) {
         if (override[i] != Foot.NONE && override[i] != node.state.columns[i]) {
           return true
@@ -295,8 +317,8 @@ export class BeatOverrides {
     return false
   }
 
-  hasBeatOverride(beat: number): boolean {
-    const beatStr = beat.toFixed(3)
+  hasOverrideAtBeat(beat: number): boolean {
+    const beatStr = this.beatToStr(beat)
     if (this.beatOverrides[beatStr] != undefined) {
       for (const f of this.beatOverrides[beatStr]) {
         if (f != Foot.NONE) {
@@ -307,8 +329,8 @@ export class BeatOverrides {
     return false
   }
 
-  getBeatOverride(beat: number): Foot[] {
-    const beatStr = beat.toFixed(3)
+  getOverridesAtBeat(beat: number): Foot[] {
+    const beatStr = this.beatToStr(beat)
     if (this.beatOverrides[beatStr] != undefined) {
       return this.beatOverrides[beatStr]
     }
@@ -320,32 +342,23 @@ export class BeatOverrides {
   }
 
   getNoteOverride(beat: number, col: number): Foot {
-    const beatStr = beat.toFixed(3)
+    const beatStr = this.beatToStr(beat)
     if (this.beatOverrides[beatStr] != undefined) {
       return this.beatOverrides[beatStr][col]
     }
     return Foot.NONE
   }
 
-  addNoteOverride(beat: number, col: number, foot: Foot): boolean {
-    const beatStr = beat.toFixed(3)
+  setNoteOverride(beat: number, col: number, foot: Foot) {
+    const beatStr = this.beatToStr(beat)
     if (this.beatOverrides[beatStr] == undefined) {
       this.beatOverrides[beatStr] = new Array(this.columnCount).fill(Foot.NONE)
     }
-    // Check that this row doesn't already contain an override for the given foot. If so, return false
-    if (
-      foot != Foot.NONE &&
-      this.beatOverrides[beatStr][col] != foot &&
-      this.beatOverrides[beatStr].includes(foot)
-    ) {
-      return false
-    }
     this.beatOverrides[beatStr][col] = foot
-    return true
   }
 
   addBeatOverride(beat: number, feet: Foot[]): boolean {
-    const beatStr = beat.toFixed(3)
+    const beatStr = this.beatToStr(beat)
     const footCount: { [key: number]: number } = {}
     let totalCount = 0
     for (const foot of feet) {
@@ -364,35 +377,51 @@ export class BeatOverrides {
   }
 
   removeNoteOverride(beat: number, col: number): boolean {
-    const beatStr = beat.toFixed(3)
+    const beatStr = this.beatToStr(beat)
     if (this.beatOverrides[beatStr] != undefined) {
       this.beatOverrides[beatStr][col] = Foot.NONE
     }
     return true
   }
 
-  removeBeatOverride(beat: number): boolean {
-    const beatStr = beat.toFixed(3)
+  removeOverridesAtBeat(beat: number): boolean {
+    const beatStr = this.beatToStr(beat)
     delete this.beatOverrides[beatStr]
     return true
-  }
-
-  setBeatOverrides(newBeatOverrides: { [key: string]: Foot[] }) {
-    this.beatOverrides = newBeatOverrides
-  }
-  resetBeatOverrides() {
-    this.beatOverrides = {}
   }
 
   getOverridesByRow(rows: Row[]): { [key: number]: Foot[] } {
     const rowOverrides: { [key: number]: Foot[] } = {}
     for (let r = 0; r < rows.length; r++) {
-      if (this.hasBeatOverride(rows[r].beat)) {
-        const override = this.getBeatOverride(rows[r].beat)
+      if (this.hasOverrideAtBeat(rows[r].beat)) {
+        const override = this.getOverridesAtBeat(rows[r].beat)
         rowOverrides[r] = override
       }
     }
     return rowOverrides
+  }
+
+  // Does setting this foot for the given column create
+  // a foot placement that is definitely invalid?
+  // (this is basically just checking if the given foot
+  //  would be present twice on this beat)
+  isNoteOverrideValid(beat: number, col: number, foot: Foot): boolean {
+    const beatStr = this.beatToStr(beat)
+    if (this.beatOverrides[beatStr] != undefined) {
+      if (
+        foot != Foot.NONE &&
+        this.beatOverrides[beatStr][col] != foot &&
+        this.beatOverrides[beatStr].includes(foot)
+      ) {
+        return false
+      }
+    }
+    return true
+  }
+
+  private beatToStr(beat: number) {
+    const beatStr = beat.toFixed(3)
+    return beatStr
   }
 }
 
