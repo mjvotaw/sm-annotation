@@ -483,15 +483,16 @@ button:disabled {
   flex-direction: row;
 }
 .item .info .title {
-  background: none;
-  border: none;
-  border-radius: 5px;
-  flex: 1 1 auto;
-  outline: none;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 1px 5px;
+}
+
+.item .info .details {
+  white-space: nowrap;
+  padding: 1px 5px;
+  margin-left: auto;
 }
 .folder.collapsed > .info > .folder-icon {
   transform: rotate(-90deg);

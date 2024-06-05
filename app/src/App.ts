@@ -28,6 +28,7 @@ import { ParityGenerator } from "./util/ParityGenerator"
 import { fpsUpdate } from "./util/Performance"
 import { isIFrame } from "./util/Util"
 import { FileHandler } from "./util/file-handler/FileHandler"
+import { SongPackSelectorWindow } from "./gui/window/SongPackSelectorWindow"
 
 declare global {
   interface Window {
@@ -189,9 +190,9 @@ export class App {
         localStorage.setItem("user_id", window.crypto.randomUUID())
         // const tutorialOverlay = new TutorialOverlay()
         // this.overlayManager.openOverlay(tutorialOverlay)
-        this.chartManager.loadSongFromAWS()
+        SongPackSelectorWindow.openSongPackSelector(this)
       } else {
-        this.chartManager.loadSongFromAWS()
+        SongPackSelectorWindow.openSongPackSelector(this)
       }
       // if (notFirstTime == null)
       // {

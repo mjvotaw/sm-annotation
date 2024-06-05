@@ -21,6 +21,7 @@ import { roundDigit } from "../util/Math"
 import { Options } from "../util/Options"
 import { FileHandler } from "../util/file-handler/FileHandler"
 import { WebFileHandler } from "../util/file-handler/WebFileHandler"
+import { SongPackSelectorWindow } from "../gui/window/SongPackSelectorWindow"
 
 export interface Keybind {
   label: string
@@ -194,9 +195,10 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
     label: "Load New song...",
     bindLabel: "New song",
     combos: [],
-    disabled: app => !app.chartManager.loadedSM || !Flags.openWindows,
+    disabled: () => !Flags.openWindows,
     callback: app => {
-      app.chartManager.loadSongFromAWS()
+      SongPackSelectorWindow.openSongPackSelector(app)
+      // app.chartManager.loadSongFromAWS()
     },
   },
   openSong: {

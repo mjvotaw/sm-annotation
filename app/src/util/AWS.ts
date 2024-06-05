@@ -4,6 +4,8 @@ const LAMBDA_GET_NEXT_SONG =
   "https://fvzwv57y4dzkar626oks7kr5tu0opmju.lambda-url.us-east-1.on.aws/"
 const LAMBDA_SAVE_ANNOTATION =
   "https://sagnvg4uvaqnganzsmjg3egryu0pqapk.lambda-url.us-east-1.on.aws/"
+const S3_SONG_PACK_JSON =
+  "https://d1uua2y0otb20p.cloudfront.net/_assets/song_packs.json"
 
 export interface GetNextSongResponse {
   song_id: number
@@ -12,8 +14,21 @@ export interface GetNextSongResponse {
   audio_url: string
 }
 
-export async function getNextSong() {
+export async function getNextSong(pack_id: number | undefined = undefined) {
+  if (pack_id) {
+    return getNextSongFromPack(pack_id)
+  }
+
   const response = await fetch(LAMBDA_GET_NEXT_SONG)
+  const responseJson: GetNextSongResponse = await response.json()
+
+  return responseJson
+}
+
+export async function getNextSongFromPack(pack_id: number) {
+  const response = await fetch(LAMBDA_GET_NEXT_SONG, {
+    body: new URLSearchParams({ pack_id: `${pack_id}` }),
+  })
   const responseJson: GetNextSongResponse = await response.json()
 
   return responseJson
@@ -46,4 +61,19 @@ export async function saveAnnotation(
     },
   })
   return response.ok
+}
+
+export interface SongPackData {
+  pack_id: number
+  pack_name: string
+  total_songs: number
+  total_annotations: number
+  songs_with_one_annotation: number
+  songs_with_three_annotations: number
+}
+
+export async function getSongPacks() {
+  const response = await fetch(S3_SONG_PACK_JSON)
+  const responseJson: SongPackData[] = await response.json()
+  return responseJson
 }

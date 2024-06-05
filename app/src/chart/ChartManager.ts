@@ -857,10 +857,10 @@ export class ChartManager {
   /**
    * Loads a song from AWS for annotation purposes
    */
-  async loadSongFromAWS() {
+  async loadSongFromAWS(pack_id: number | undefined = undefined) {
     const loadingOverlay = new LoadingOverlay()
     this.app.overlayManager.openOverlay(loadingOverlay)
-    const nextSong = await getNextSong()
+    const nextSong = await getNextSong(pack_id)
     await this.loadSM(nextSong.sm_url)
     this.loadedChartAWSInfo = nextSong
     loadingOverlay.closeOverlay()
