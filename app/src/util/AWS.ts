@@ -26,9 +26,8 @@ export async function getNextSong(pack_id: number | undefined = undefined) {
 }
 
 export async function getNextSongFromPack(pack_id: number) {
-  const response = await fetch(LAMBDA_GET_NEXT_SONG, {
-    body: new URLSearchParams({ pack_id: `${pack_id}` }),
-  })
+  const url = `${LAMBDA_GET_NEXT_SONG}?pack_id=${pack_id}`
+  const response = await fetch(url)
   const responseJson: GetNextSongResponse = await response.json()
 
   return responseJson
