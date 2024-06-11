@@ -1,3 +1,4 @@
+import { App } from "../../App"
 import { OverlayManager } from "./OverlayManager"
 
 // This is a super simple class for displaying screen-wide overlays
@@ -8,11 +9,12 @@ export interface OverlayOptions {
 
 export abstract class Overlay {
   private overlayManager?: OverlayManager
-
+  app: App
   overlayElement: HTMLDivElement
   viewElement: HTMLDivElement
   options: OverlayOptions
-  protected constructor(options: OverlayOptions) {
+  protected constructor(app: App, options: OverlayOptions) {
+    this.app = app
     this.options = options
 
     const overlayElement = document.createElement("div")

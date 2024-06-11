@@ -29,6 +29,7 @@ import { fpsUpdate } from "./util/Performance"
 import { isIFrame } from "./util/Util"
 import { FileHandler } from "./util/file-handler/FileHandler"
 import { SongPackSelectorWindow } from "./gui/window/SongPackSelectorWindow"
+import { TutorialOverlay } from "./gui/overlay/TutorialOverlay"
 
 declare global {
   interface Window {
@@ -185,22 +186,11 @@ export class App {
 
       const userId = localStorage.getItem("user_id")
       if (userId == null) {
-        //TODO: Actually implement tutorial
-
-        localStorage.setItem("user_id", window.crypto.randomUUID())
-        // const tutorialOverlay = new TutorialOverlay()
-        // this.overlayManager.openOverlay(tutorialOverlay)
-        SongPackSelectorWindow.openSongPackSelector(this)
+        const tutorialOverlay = new TutorialOverlay(this)
+        this.overlayManager.openOverlay(tutorialOverlay)
       } else {
         SongPackSelectorWindow.openSongPackSelector(this)
       }
-      // if (notFirstTime == null)
-      // {
-      // }
-      // else
-      // {
-      // }
-      // this.windowManager.openWindow(new InitialWindow(this))
     })
 
     window.onbeforeunload = event => {

@@ -1,8 +1,9 @@
+import { App } from "../../App"
 import { Overlay } from "./Overaly"
 
 export class LoadingOverlay extends Overlay {
-  constructor() {
-    super({
+  constructor(app: App) {
+    super(app, {
       overlay_id: "loading-overlay",
     })
     this.initView()

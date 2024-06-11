@@ -4,9 +4,14 @@ The main goal of this project is to refine an algorithm for predicting foot plac
 
 I quickly realized that this is way too much work for me to do on my own, so I built this application to make it as simple as I could to get others to help me out. All song data is loaded from a remote database, and corrections are saved back to that database. Once I've collected all the data that I need, I'll make it all publicly available for others to use.
 
-## What I need you to do
 
-When you open the app, it will load a random song, and provide you with it's best guess at foot placements. Your job is to check the step chart and correct any foot placements that don't make sense. When you're happy with it, click "Save Foot Placements" to save your corrections. If you want to do another one, click `File > Load New Song...`.
+## How does this thing work?
+
+When you open the app, it'll give you the option to either load a completely random song, or load a random song from a particular pack:
+
+<img src="assets/preview/load-song-window.png" width="300" height="auto">
+
+ It'll then load a song and provide you with it's best guess at foot placements. Your job is to check the step chart and correct any foot placements that don't make sense. When you're happy with it, click "Save Foot Placements" to save your corrections. If you want to do another one, click `File > Load New Song...`.
 
 In practice, I've found that this takes about 5-10 minutes per chart, depending on the chart's difficulty and the accuracy of the predicted foot placements.
 
