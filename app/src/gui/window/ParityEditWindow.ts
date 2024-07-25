@@ -160,6 +160,46 @@ export class ParityEditWindow extends Window {
     return selector
   }
 
+  updateParitySelectorOptions(
+    selector: HTMLSelectElement,
+    disableToes: boolean,
+    disableHeels: boolean
+  ) {
+    // If There's only one note present at the current beat, we don't want users
+    // to select left/right toe, so hide those options, and rename left/right heel
+    // to just "left foot" and "right foot"
+    if (disableToes) {
+      selector.children.item(2)?.setAttribute("disabled", "disabled")
+      selector.children.item(2)?.classList.add("hidden")
+      selector.children.item(4)?.setAttribute("disabled", "disabled")
+      selector.children.item(4)?.classList.add("hidden")
+
+      selector.children.item(1)!.innerHTML = "Left Foot"
+      selector.children.item(3)!.innerHTML = "Right Foot"
+    } else {
+      selector.children.item(2)?.removeAttribute("disabled")
+      selector.children.item(2)?.classList.remove("hidden")
+      selector.children.item(4)?.removeAttribute("disabled")
+      selector.children.item(4)?.classList.remove("hidden")
+
+      selector.children.item(1)!.innerHTML = "Left Heel"
+      selector.children.item(3)!.innerHTML = "Right Heel"
+    }
+
+    // And if we want to hide the heels as well? Then hide them
+    if (disableHeels) {
+      selector.children.item(1)?.setAttribute("disabled", "disabled")
+      selector.children.item(1)?.classList.add("hidden")
+      selector.children.item(3)?.setAttribute("disabled", "disabled")
+      selector.children.item(3)?.classList.add("hidden")
+    } else {
+      selector.children.item(1)?.removeAttribute("disabled")
+      selector.children.item(1)?.classList.remove("hidden")
+      selector.children.item(3)?.removeAttribute("disabled")
+      selector.children.item(3)?.classList.remove("hidden")
+    }
+  }
+
   addFooterButtons() {
     const footer = document.createElement("div")
     footer.classList.add("footer")
@@ -196,7 +236,9 @@ export class ParityEditWindow extends Window {
     const beat = this.app.chartManager?.getBeat()
     const parity = window.Parity?.getParityForBeat(beat)
     const overrides = window.Parity?.getOverridesAtBeat(beat)
-
+    // How many notes are present on this beat? (how many items in parity have a parity other that NONE?)
+    const activeNoteCount =
+      parity == undefined ? 0 : parity.filter(p => p != Foot.NONE).length
     const optionLabels = [
       "None",
       "Left Heel",
@@ -221,18 +263,41 @@ export class ParityEditWindow extends Window {
 
         this.parityOverrideSelects[i].value = "0"
         this.parityOverrideSelects[i].disabled = true
+        this.updateParitySelectorOptions(
+          this.parityOverrideSelects[i],
+          true,
+          true
+        )
       }
       for (const l of this.parityDisplayLabels) {
         l.innerText = "None"
       }
     } else {
+      // if there's only one note, we only show the user left/right foot options, so replace
+      // left/right heel text
+      if (activeNoteCount == 1) {
+        optionLabels[1] = "Left Foot"
+        optionLabels[3] = "Right Foot"
+      }
       for (let i = 0; i < parity.length; i++) {
         this.parityDisplayLabels[i].innerText = optionLabels[parity[i]]
         this.parityDisplayLabels[i].classList.remove(...optionTextColors)
         this.parityDisplayLabels[i].classList.add(optionTextColors[parity[i]])
-
         this.parityOverrideSelects[i].value = `${overrides[i]}`
         this.parityOverrideSelects[i].disabled = parity[i] == Foot.NONE
+        if (parity[i] == Foot.NONE) {
+          this.updateParitySelectorOptions(
+            this.parityOverrideSelects[i],
+            true,
+            true
+          )
+        } else {
+          this.updateParitySelectorOptions(
+            this.parityOverrideSelects[i],
+            activeNoteCount == 1,
+            false
+          )
+        }
       }
     }
   }

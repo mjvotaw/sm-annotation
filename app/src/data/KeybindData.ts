@@ -1460,4 +1460,16 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       Options.general.showDanceStage = !Options.general.showDanceStage
     },
   },
+
+  viewDocumentation: {
+    label: "View Documentation",
+    combos: [],
+    disabled: false,
+    callback: () => {
+      window.open(
+        "https://github.com/mjvotaw/sm-annotation/blob/parity-editor/STEPANNOTATION.md",
+        "_blank"
+      )
+    },
+  },
 }

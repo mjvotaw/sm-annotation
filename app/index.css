@@ -984,7 +984,12 @@ div.inlineEdit[contenteditable="true"]:focus {
   text-align: center;
 }
 
-.parity-display-panel select,
+.parity-display-panel select {
+  color: black;
+  width: 85%;
+  overflow-y: hidden;
+}
+
 .parity-display-panel option {
   color: black;
 }
@@ -1006,6 +1011,10 @@ div.inlineEdit[contenteditable="true"]:focus {
 .parity-display-panel select:not(:disabled) option:checked.parity-RightToe {
   color: white;
   background-color: #fae5b9;
+}
+
+.parity-display-panel option:disabled {
+  background-color: rgb(158, 158, 158);
 }
 
 .parity-weights-container {
