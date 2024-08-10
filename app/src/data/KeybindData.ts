@@ -1472,4 +1472,15 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       )
     },
   },
+  viewTechNotation: {
+    label: "How to read tech notation",
+    combos: [],
+    disabled: false,
+    callback: () => {
+      window.open(
+        "https://itgwiki.dominick.cc/en/playstyles/tech/notation",
+        "_blank"
+      )
+    },
+  },
 }
