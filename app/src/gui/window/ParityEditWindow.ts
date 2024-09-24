@@ -103,7 +103,7 @@ export class ParityEditWindow extends ResizableWindow {
 
     for (let i = 0; i < numCols; i++) {
       const receptorPanel = document.createElement("div")
-      receptorPanel.classList.add("receptor", columnNames[i])
+      receptorPanel.classList.add("receptor", columnNames[i % 4])
       receptorContainer.appendChild(receptorPanel)
       // Create space for displaying current parity selections
 

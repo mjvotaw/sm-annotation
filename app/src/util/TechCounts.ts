@@ -7,9 +7,11 @@ import {
   TECH_COUNTS,
   TechCountsCategory,
 } from "./ParityDataTypes"
+import { StageLayout } from "./StageLayouts"
 
 export function calculateTechCounts(
   rows: Row[],
+  layout: StageLayout,
   columnCount: number,
   timeThresholds: number[]
 ) {
@@ -20,6 +22,7 @@ export function calculateTechCounts(
 
   const techCountsPerRow = calculateTechCountsPerRow(
     rows,
+    layout,
     columnCount,
     timeThresholds
   )
@@ -44,6 +47,7 @@ export function calculateTechCounts(
 
 export function calculateTechCountsPerRow(
   rows: Row[],
+  layout: StageLayout,
   columnCount: number,
   timeThresholds: number[]
 ) {
@@ -53,6 +57,7 @@ export function calculateTechCountsPerRow(
     const techCountsForRow = calculateTechCountsForRow(
       rows,
       r,
+      layout,
       columnCount,
       timeThresholds
     )
@@ -65,6 +70,7 @@ export function calculateTechCountsPerRow(
 export function calculateTechCountsForRow(
   rows: Row[],
   rowIndex: number,
+  layout: StageLayout,
   columnCount: number,
   timeThresholds: number[]
 ) {
@@ -106,16 +112,18 @@ export function calculateTechCountsForRow(
   */
 
   // check for jacks and doublesteps
-  if (rowIndex > 0 && noteCount == 1 && previousNoteCount == 1) {
+  if (rowIndex > 0 && previousRow && noteCount == 1 && previousNoteCount == 1) {
     for (const foot of FEET) {
       if (
-        currentFootPlacement[foot] == -1 ||
-        previousFootPlacement[foot] == -1
+        currentRow.whereTheFeetAre[foot] == -1 ||
+        previousRow.whereTheFeetAre[foot] == -1
       ) {
         continue
       }
 
-      if (previousFootPlacement[foot] == currentFootPlacement[foot]) {
+      if (
+        previousRow.whereTheFeetAre[foot] == currentRow.whereTheFeetAre[foot]
+      ) {
         if (
           timeThresholds[TechCountsCategory.Jacks] == undefined ||
           currentRow.second - rows[rowIndex - 1].second <
@@ -144,61 +152,147 @@ export function calculateTechCountsForRow(
         timeThresholds[TechCountsCategory.Brackets])
   ) {
     if (
-      currentFootPlacement[Foot.LEFT_HEEL] != -1 &&
-      currentFootPlacement[Foot.LEFT_TOE] != -1
+      currentRow.whereTheFeetAre[Foot.LEFT_HEEL] != -1 &&
+      currentRow.whereTheFeetAre[Foot.LEFT_TOE] != -1
     ) {
       techs.push(TechCountsCategory.Brackets)
     }
 
     if (
-      currentFootPlacement[Foot.RIGHT_HEEL] != -1 &&
-      currentFootPlacement[Foot.RIGHT_TOE] != -1
+      currentRow.whereTheFeetAre[Foot.RIGHT_HEEL] != -1 &&
+      currentRow.whereTheFeetAre[Foot.RIGHT_TOE] != -1
     ) {
       techs.push(TechCountsCategory.Brackets)
     }
   }
 
-  for (let c = 0; c < columnCount; c++) {
-    if (currentColumns[c] == Foot.NONE) {
-      continue
-    }
-
-    // this same column was stepped on in the previous row, but not by the same foot ==> footswitch or sideswitch
-    if (
-      previousColumns[c] != Foot.NONE &&
-      previousColumns[c] != currentColumns[c] &&
-      OTHER_PART_OF_FOOT[previousColumns[c]] != currentColumns[c] &&
-      (rowIndex == 0 ||
-        timeThresholds[TechCountsCategory.Footswitches] == undefined ||
-        currentRow.second - rows[rowIndex - 1].second <
-          timeThresholds[TechCountsCategory.Footswitches])
-    ) {
-      // this is assuming only 4-panel single
-      if (c == 0 || c == 3) {
-        techs.push(TechCountsCategory.Sideswitches)
-      } else {
+  if (previousRow) {
+    // check for up footswitches
+    for (const c of layout.upArrows) {
+      if (
+        isFootswitch(
+          c,
+          currentRow,
+          previousRow,
+          timeThresholds[TechCountsCategory.Footswitches]
+        )
+      ) {
         techs.push(TechCountsCategory.Footswitches)
       }
     }
-    // if the right foot is pressing the left arrow, or the left foot is pressing the right ==> crossover
-    else if (
-      c == 0 &&
-      previousColumns[c] == Foot.NONE &&
-      (currentColumns[c] == Foot.RIGHT_HEEL ||
-        currentColumns[c] == Foot.RIGHT_TOE)
-    ) {
-      1
-      techs.push(TechCountsCategory.Crossovers)
-    } else if (
-      c == 3 &&
-      previousColumns[c] == Foot.NONE &&
-      (currentColumns[c] == Foot.LEFT_HEEL ||
-        currentColumns[c] == Foot.LEFT_TOE)
-    ) {
-      techs.push(TechCountsCategory.Crossovers)
+
+    // check for down footswitches
+    for (const c of layout.downArrows) {
+      if (
+        isFootswitch(
+          c,
+          currentRow,
+          previousRow,
+          timeThresholds[TechCountsCategory.Footswitches]
+        )
+      ) {
+        techs.push(TechCountsCategory.Footswitches)
+      }
+    }
+
+    // check for sideswitches
+    for (const c of layout.downArrows) {
+      if (
+        isFootswitch(
+          c,
+          currentRow,
+          previousRow,
+          timeThresholds[TechCountsCategory.Footswitches]
+        )
+      ) {
+        techs.push(TechCountsCategory.Sideswitches)
+      }
     }
   }
+
+  // Check for crossovers
+
+  if (previousRow) {
+    const leftHeel = currentRow.whereTheFeetAre[Foot.LEFT_HEEL]
+    const leftToe = currentRow.whereTheFeetAre[Foot.LEFT_TOE]
+    const rightHeel = currentRow.whereTheFeetAre[Foot.RIGHT_HEEL]
+    const rightToe = currentRow.whereTheFeetAre[Foot.RIGHT_TOE]
+
+    const previousLeftHeel = previousRow.whereTheFeetAre[Foot.LEFT_HEEL]
+    const previousLeftToe = previousRow.whereTheFeetAre[Foot.LEFT_TOE]
+    const previousRightHeel = previousRow.whereTheFeetAre[Foot.RIGHT_HEEL]
+    const previousRightToe = previousRow.whereTheFeetAre[Foot.RIGHT_TOE]
+
+    // Is the right crossing over?
+    if (rightHeel != -1 && previousLeftHeel != -1 && previousRightHeel == -1) {
+      const leftPos = layout.averagePoint(previousLeftHeel, previousLeftToe)
+      const rightPos = layout.averagePoint(rightHeel, rightToe)
+
+      if (rightPos.x < leftPos.x) {
+        if (rowIndex > 1) {
+          const previousPreviousRow = rows[rowIndex - 2]
+          if (
+            previousPreviousRow &&
+            previousPreviousRow.whereTheFeetAre[Foot.RIGHT_HEEL] != rightHeel
+          ) {
+            techs.push(TechCountsCategory.Crossovers)
+          }
+        } else {
+          techs.push(TechCountsCategory.Crossovers)
+        }
+      }
+    }
+    // Is the left crossing over?
+    else if (
+      leftHeel != -1 &&
+      previousRightHeel != -1 &&
+      previousLeftHeel == -1
+    ) {
+      const leftPos = layout.averagePoint(leftHeel, leftToe)
+      const rightPos = layout.averagePoint(previousRightHeel, previousRightToe)
+
+      if (rightPos.x < leftPos.x) {
+        if (rowIndex > 1) {
+          const previousPreviousRow = rows[rowIndex - 2]
+          if (
+            previousPreviousRow &&
+            previousPreviousRow.whereTheFeetAre[Foot.LEFT_HEEL] != leftHeel
+          ) {
+            techs.push(TechCountsCategory.Crossovers)
+          }
+        } else {
+          techs.push(TechCountsCategory.Crossovers)
+        }
+      }
+    }
+  }
+
   return techs
+}
+
+function isFootswitch(
+  c: number,
+  currentRow: Row,
+  previousRow: Row,
+  cutoff: number
+) {
+  const elapsedTime = currentRow.second - previousRow.second
+
+  if (
+    currentRow.columns[c] == Foot.NONE ||
+    previousRow.columns[c] == Foot.NONE
+  ) {
+    return false
+  }
+
+  if (
+    previousRow.columns[c] != currentRow.columns[c] &&
+    OTHER_PART_OF_FOOT[previousRow.columns[c]] != currentRow.columns[c] &&
+    (cutoff == undefined || elapsedTime < cutoff)
+  ) {
+    return true
+  }
+  return false
 }
 
 function emptyFootPlacement() {

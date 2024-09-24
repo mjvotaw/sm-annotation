@@ -73,9 +73,11 @@ export class ParityGenInternal {
 
     const selectedStates = this.selectStatesForRows(graph, rows.length)
     const parities = selectedStates.map(s => s.columns)
+
     this.setNoteParity(rows, parities, beatOverrides)
     const techCounts = calculateTechCounts(
       rows,
+      this.layout,
       this.layout.columnCount,
       TECH_THRESHOLDS
     )
@@ -252,6 +254,9 @@ export class ParityGenInternal {
             fakeMines: nextFakeMines,
             second: lastColumnSecond,
             beat: lastColumnBeat,
+            whereTheFeetAre: [],
+            columns: [],
+            noteCount: 0,
           })
         }
         lastColumnSecond = note.second
@@ -294,6 +299,9 @@ export class ParityGenInternal {
       fakeMines: nextFakeMines,
       second: lastColumnSecond!,
       beat: lastColumnBeat!,
+      whereTheFeetAre: [],
+      columns: [],
+      noteCount: 0,
     })
 
     return rows
@@ -330,12 +338,19 @@ export class ParityGenInternal {
   ) {
     for (let i = 0; i < rows.length; i++) {
       const parityForRow = parities[i]
+      rows[i].whereTheFeetAre = [-1, -1, -1, -1, -1]
       for (let j = 0; j < this.layout.columnCount; j++) {
         if (rows[i].notes[j]) {
           rows[i].notes[j]!.parity = FEET_LABELS[parityForRow[j]]
           rows[i].notes[j]!.parityOverride =
             beatOverrides && beatOverrides.hasBeatOverride(rows[i].beat)
+          rows[i].columns[j] = parityForRow[j]
+          rows[i].noteCount += 1
+        } else {
+          rows[i].columns[j] = Foot.NONE
         }
+        if (parityForRow[j]! + Foot.NONE)
+          rows[i].whereTheFeetAre[parityForRow[j]] = j
       }
     }
   }

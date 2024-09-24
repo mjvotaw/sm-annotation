@@ -177,6 +177,9 @@ export interface Row {
   fakeMines: (number | undefined)[]
   second: number
   beat: number
+  columns: Foot[]
+  whereTheFeetAre: number[]
+  noteCount: number
 }
 
 // A node within a StepParityGraph.

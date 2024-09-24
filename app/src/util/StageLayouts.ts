@@ -7,10 +7,22 @@ export class StageLayout {
   name: string
   layout: StagePoint[]
   columnCount: number
-  constructor(name: string, layout: StagePoint[]) {
+  upArrows: number[]
+  downArrows: number[]
+  sideArrows: number[]
+  constructor(
+    name: string,
+    layout: StagePoint[],
+    upArrows: number[],
+    downArrows: number[],
+    sideArrows: number[]
+  ) {
     this.name = name
     this.layout = layout
     this.columnCount = layout.length
+    this.upArrows = upArrows
+    this.downArrows = downArrows
+    this.sideArrows = sideArrows
   }
 
   getXDifference(leftIndex: number, rightIndex: number) {
@@ -81,21 +93,33 @@ export class StageLayout {
 }
 
 export const LAYOUT: { [id: string]: StageLayout } = {
-  "dance-single": new StageLayout("dance-single", [
-    { x: 0, y: 1 }, // Left
-    { x: 1, y: 0 }, // Down
-    { x: 1, y: 2 }, // Up
-    { x: 2, y: 1 }, // Right
-  ]),
-  "dance-double": new StageLayout("dance-double", [
-    { x: 0, y: 1 }, // P1 Left
-    { x: 1, y: 0 }, // P1 Down
-    { x: 1, y: 2 }, // P1 Up
-    { x: 2, y: 1 }, // P1 Right
+  "dance-single": new StageLayout(
+    "dance-single",
+    [
+      { x: 0, y: 1 }, // Left
+      { x: 1, y: 0 }, // Down
+      { x: 1, y: 2 }, // Up
+      { x: 2, y: 1 }, // Right
+    ],
+    [2],
+    [1],
+    [0, 3]
+  ),
+  "dance-double": new StageLayout(
+    "dance-double",
+    [
+      { x: 0, y: 1 }, // P1 Left
+      { x: 1, y: 0 }, // P1 Down
+      { x: 1, y: 2 }, // P1 Up
+      { x: 2, y: 1 }, // P1 Right
 
-    { x: 3, y: 1 }, // P2 Left
-    { x: 4, y: 0 }, // P2 Down
-    { x: 4, y: 2 }, // P2 Up
-    { x: 5, y: 1 }, // P2 Right
-  ]),
+      { x: 3, y: 1 }, // P2 Left
+      { x: 4, y: 0 }, // P2 Down
+      { x: 4, y: 2 }, // P2 Up
+      { x: 5, y: 1 }, // P2 Right
+    ],
+    [2, 6],
+    [1, 5],
+    [0, 3, 4, 7]
+  ),
 }
