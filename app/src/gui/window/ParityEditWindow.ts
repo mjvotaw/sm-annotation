@@ -183,6 +183,7 @@ export class ParityEditWindow extends ResizableWindow {
     container.classList.add("parity-node-display")
 
     const nodesLabel = document.createElement("div")
+    nodesLabel.classList.add("nodes-label")
     nodesLabel.innerText = "Nodes:"
 
     this.innerContainer.appendChild(nodesLabel)
@@ -402,11 +403,19 @@ export class ParityEditWindow extends ResizableWindow {
     const selectedStateIds = selectedStates.map(s => s.idx)
     // this is a whole bunch of code for displaying all of the nodes for a given row,
     // and the weights that make up the costs for each parent node.
+
     const nodeDisplay = this.nodeDisplayContainer
     if (nodes && nodeDisplay) {
+      const nodesLabel = this.innerContainer.querySelector(".nodes-label")
+      if (nodesLabel) {
+        nodesLabel.innerHTML = `Nodes (${nodes.length}):`
+      }
       nodeDisplay.textContent = ""
 
       nodes.forEach(node => {
+        if (node.ancestors.size == 0) {
+          return
+        }
         const isSelected = selectedStateIds.includes(node.state.idx)
 
         const parityStr = node.state.combinedColumns
