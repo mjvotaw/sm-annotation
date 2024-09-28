@@ -196,7 +196,7 @@ export function calculateTechCountsForRow(
     }
 
     // check for sideswitches
-    for (const c of layout.downArrows) {
+    for (const c of layout.sideArrows) {
       if (
         isFootswitch(
           c,
