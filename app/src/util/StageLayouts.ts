@@ -25,20 +25,17 @@ export class StageLayout {
     this.sideArrows = sideArrows
   }
 
-  getXDifference(leftIndex: number, rightIndex: number) {
+  // Returns the cosine of the angle made between the player's
+  // left and right feet and the x-axis.
+  // This value can inform us on the degree of turning, but
+  // not which way the player is turned
+  getFacingDirectionCosine(leftIndex: number, rightIndex: number) {
     if (leftIndex == rightIndex) return 0
     let dx = this.layout[rightIndex].x - this.layout[leftIndex].x
     const dy = this.layout[rightIndex].y - this.layout[leftIndex].y
 
     const distance = Math.sqrt(dx * dx + dy * dy)
     dx /= distance
-
-    const negative = dx <= 0
-
-    dx = Math.pow(dx, 4)
-
-    if (negative) dx = -dx
-
     return dx
   }
 

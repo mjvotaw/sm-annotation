@@ -196,7 +196,7 @@ export class ParityCostCalculator {
 
     costs["SPIN"] = this.calcSpinCost(initialState, combinedPlacement)
 
-    costs["FOOTSWITCH"] = this.calcFootswitchCost(
+    costs["FOOTSWITCH"] = this.calcSlowFootswitchCost(
       initialState,
       resultState,
       combinedColumns,
@@ -705,42 +705,14 @@ export class ParityCostCalculator {
     // facing backwards gives a bit of bad weight (scaled heavily the further back you angle, so crossovers aren't Too bad; less bad than doublesteps)
     const heelFacing =
       combinedPlacement.leftHeel != -1 && combinedPlacement.rightHeel != -1
-        ? this.layout.getXDifference(
+        ? this.layout.getFacingDirectionCosine(
             combinedPlacement.leftHeel,
             combinedPlacement.rightHeel
           )
         : 0
-    const toeFacing =
-      combinedPlacement.leftToe != -1 && combinedPlacement.rightToe != -1
-        ? this.layout.getXDifference(
-            combinedPlacement.leftToe,
-            combinedPlacement.rightToe
-          )
-        : 0
-    const leftFacing =
-      combinedPlacement.leftHeel != -1 && combinedPlacement.leftToe != -1
-        ? this.layout.getYDifference(
-            combinedPlacement.leftHeel,
-            combinedPlacement.leftToe
-          )
-        : 0
-    const rightFacing =
-      combinedPlacement.rightHeel != -1 && combinedPlacement.rightToe != -1
-        ? this.layout.getYDifference(
-            combinedPlacement.rightHeel,
-            combinedPlacement.rightToe
-          )
-        : 0
-    const heelFacingPenalty = Math.pow(-Math.min(heelFacing, 0), 1.8) * 100
-    const toesFacingPenalty = Math.pow(-Math.min(toeFacing, 0), 1.8) * 100
-    const leftFacingPenalty = Math.pow(-Math.min(leftFacing, 0), 1.8) * 100
-    const rightFacingPenalty = Math.pow(-Math.min(rightFacing, 0), 1.8) * 100
 
+    const heelFacingPenalty = Math.pow(-Math.min(heelFacing, 0), 7.2) * 200
     if (heelFacingPenalty > 0) cost += heelFacingPenalty * this.WEIGHTS.FACING
-    if (toesFacingPenalty > 0) cost += toesFacingPenalty * this.WEIGHTS.FACING
-    if (leftFacingPenalty > 0) cost += leftFacingPenalty * this.WEIGHTS.FACING
-    if (rightFacingPenalty > 0) cost += rightFacingPenalty * this.WEIGHTS.FACING
-
     return cost
   }
 
@@ -796,11 +768,11 @@ export class ParityCostCalculator {
 
   // Footswitches are harder to do when they get too slow.
   // Notes with an elapsed time greater than this will incur a penalty
-  // 0.25 = 8th notes at 120 bpm
-  private SlowFootswitchThrshold = 0.2
+  // 0.2 = 8th notes at 150 bpm
+  private SlowFootswitchThreshold = 0.2
 
   private SlowFootswitchIgnore = 0.4
-  calcFootswitchCost(
+  calcSlowFootswitchCost(
     initialState: State,
     resultState: State,
     combinedColumns: Foot[],
@@ -810,9 +782,9 @@ export class ParityCostCalculator {
     let cost = 0
     let footswitchCount = 0
 
-    // ignore footswitch with 24 or less distance (8th note); penalise slower footswitches based on distance
+    // ignore footswitch with elapsed times <= SlowFootswitchThreshold; penalise slower footswitches based on distance
     if (
-      elapsedTime >= this.SlowFootswitchThrshold &&
+      elapsedTime >= this.SlowFootswitchThreshold &&
       elapsedTime < this.SlowFootswitchIgnore
     ) {
       // footswitching has no penalty if there's a mine nearby
@@ -820,7 +792,7 @@ export class ParityCostCalculator {
         !row.mines.some(x => x !== undefined) &&
         !row.fakeMines.some(x => x !== undefined)
       ) {
-        const timeScaled = elapsedTime - this.SlowFootswitchThrshold
+        const timeScaled = elapsedTime - this.SlowFootswitchThreshold
 
         for (let i = 0; i < combinedColumns.length; i++) {
           if (
@@ -835,7 +807,7 @@ export class ParityCostCalculator {
               OTHER_PART_OF_FOOT[resultState.columns[i]]
           ) {
             cost +=
-              (timeScaled / (this.SlowFootswitchThrshold + timeScaled)) *
+              ((elapsedTime - this.SlowFootswitchThreshold) / elapsedTime) *
               this.WEIGHTS.FOOTSWITCH
             footswitchCount += 1
           }

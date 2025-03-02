@@ -70,7 +70,7 @@ export const DEFAULT_WEIGHTS: { [key: string]: number } = {
   BRACKETJACK: 20,
   JACK: 30,
   JUMP: 0,
-  SLOW_BRACKET: 300,
+  SLOW_BRACKET: 400,
   TWISTED_FOOT: 100000,
   BRACKETTAP: 400,
   HOLDSWITCH: 55,

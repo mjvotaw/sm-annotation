@@ -120,14 +120,29 @@ export function calculateTechCountsForRow(
       ) {
         continue
       }
+      const previousColumn = previousRow.whereTheFeetAre[foot]
+      const currentColumn = currentRow.whereTheFeetAre[foot]
+
+      if (
+        !previousRow.notes[previousColumn] ||
+        previousRow.notes[previousColumn].type != "Tap"
+      ) {
+        continue
+      }
 
       if (
         previousRow.whereTheFeetAre[foot] == currentRow.whereTheFeetAre[foot]
       ) {
         if (
-          timeThresholds[TechCountsCategory.Jacks] == undefined ||
-          currentRow.second - rows[rowIndex - 1].second <
-            timeThresholds[TechCountsCategory.Jacks]
+          !(
+            previousRow.holds[previousColumn] &&
+            previousRow.holds[previousColumn]!.beat +
+              previousRow.holds[previousColumn]!.hold >=
+              currentRow.beat
+          ) &&
+          (timeThresholds[TechCountsCategory.Jacks] == undefined ||
+            currentRow.second - rows[rowIndex - 1].second <
+              timeThresholds[TechCountsCategory.Jacks])
         ) {
           techs.push(TechCountsCategory.Jacks)
         }
